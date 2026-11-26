@@ -562,7 +562,9 @@ $('p-guardar').onclick=async()=>{
     let id=destino;
     if(creando){
       const previo=perfiles.find(x=>x.consentimiento);
-      fila.user_id=sess.uid;fila.activo=true;
+      // 26-nov · Piloto: un perfil nuevo NO busca ofertas solo (cada búsqueda gasta 3 de las
+      // 180 consultas del mes). Las convocatorias le llegan igual; la búsqueda se activa en Ajustes.
+      fila.user_id=sess.uid;fila.activo=false;
       fila.consentimiento=previo?previo.consentimiento:{version:CONSENT_V,fecha:new Date().toISOString(),canal:'app'};
       const r=await rest('empleo_perfiles',{metodo:'POST',cuerpo:fila,prefer:'return=representation'});
       id=r&&r[0]&&r[0].id;
@@ -571,7 +573,10 @@ $('p-guardar').onclick=async()=>{
     }
     await cargarPerfiles();
     if(borrador.nombre&&!sess.nombre){sess.nombre=borrador.nombre;setSess(sess)}
-    if(creando){await cargarOfertas();irA('ofertas');buscarAhora(true,primero?null:id)}else{toast('Perfil guardado');irA('ajustes')}
+    if(creando){await cargarOfertas();
+      if(primero){irA('ajustes');toast('¡Perfil listo! Ahora activa «Quiero recibir convocatorias» y los avisos de este celular.',6000)}
+      else{irA('ajustes');toast('Perfil creado. Para buscar ofertas, toca «Buscar ahora» en Ofertas o «Reanudar» aquí.',5000)}}
+    else{toast('Perfil guardado');irA('ajustes')}
   }catch(e){$('p-msg').innerHTML=`<div class="err">${/409|400/.test(e.message)&&perfiles.length>=MAX_PERFILES?'Ya tienes '+MAX_PERFILES+' perfiles, que es el máximo.':'No se pudo guardar. Revisa tu conexión.'}</div>`}
   finally{$('p-guardar').disabled=false}
 };
