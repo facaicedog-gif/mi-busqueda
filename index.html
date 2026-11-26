@@ -31,6 +31,16 @@ button{cursor:pointer}
 .pills::-webkit-scrollbar{display:none}
 .pill{white-space:nowrap;font-size:13px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--linea);color:var(--gris)}
 .pill.on{background:var(--azul);border-color:var(--azul);color:#fff}
+/* 26-nov · convocatorias */
+.nav b{position:relative}
+.bdg{position:absolute;top:-4px;right:-10px;min-width:17px;height:17px;border-radius:9px;background:#dc2626;color:#fff;font-size:10.5px;font-style:normal;display:grid;place-items:center;padding:0 4px;font-weight:700}
+.cv{background:#fff;border-radius:14px;padding:12px 13px;border:0;width:100%;text-align:left;color:inherit;display:block;position:relative}
+.cv.nueva::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:#2563eb}
+.cv h3{margin:0;font-size:15px}.cv .nota{margin-top:3px}
+.cvest{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;margin-top:6px}
+.cvest.ok{background:var(--okf);color:var(--ok)}.cvest.amb{background:var(--ambf);color:var(--amb)}.cvest.gris{background:#e2e8f0;color:#475569}.cvest.azul{background:#dbeafe;color:#1D4ED8}
+.borroso{filter:blur(5px);user-select:none}
+.dentro{background:linear-gradient(135deg,#064e3b,#047857)!important}
 /* 26-nov · varios perfiles */
 .perf .pill{display:flex;align-items:center;gap:6px;color:var(--tinta)}
 .perf .pill i{width:9px;height:9px;border-radius:50%;display:inline-block}
@@ -254,6 +264,14 @@ a{color:var(--azul)}
     <div class="box"><h4>Tus perfiles de búsqueda</h4><div id="a-perfiles"></div></div>
     <button class="btn d" id="a-nuevo">+ Agregar otro perfil</button>
     <div class="box"><h4>Búsquedas de este mes</h4><div id="a-uso" class="txt13">…</div></div>
+    <div class="box"><h4>Convocatorias de empresas</h4>
+      <label class="check"><input type="checkbox" id="cv-recibir"><span><b>Quiero recibir convocatorias</b><br><span class="nota" style="margin:0">Cuando una empresa publique un cargo que encaje con tu perfil, te llega un aviso. La empresa no sabe que te llegó: sólo ve tu hoja de vida y tu contacto si entras en el cupo. Autorizo ese uso de mis datos.</span></span></label>
+      <label class="l">Tu celular (lo ve la empresa sólo si entras en el cupo)</label>
+      <input type="text" id="cv-celular" inputmode="tel" maxlength="20" placeholder="Ej. 300 000 0000">
+      <button class="btn" style="margin-top:10px" id="cv-guardar">Guardar</button>
+      <button class="btn p" style="margin-top:8px" id="cv-avisos">🔔 Activar avisos en este celular</button>
+      <div class="nota" id="cv-estado"></div>
+    </div>
     <div class="box"><h4>Tus datos</h4>
       <div class="txt13">Puedes borrar todos tus perfiles y todas tus ofertas. No se puede deshacer.</div>
       <button class="btn r" style="margin-top:10px" id="a-borrar">Borrar todos mis datos</button>
@@ -263,8 +281,15 @@ a{color:var(--azul)}
   </div>
 </section>
 
+<!-- CONVOCATORIAS (26-nov · empresas que buscan tu perfil) -->
+<section id="v-conv" class="oculto">
+  <div class="cab"><small>Empresas que buscan tu perfil</small><h2>Convocatorias</h2></div>
+  <div class="cuerpo sube" id="cv-lista"></div>
+</section>
+
 <nav class="nav oculto" id="nav">
   <button data-v="ofertas" class="on"><b>◎</b>Ofertas</button>
+  <button data-v="conv"><b>💼<span class="bdg oculto" id="cv-bdg"></span></b>Convocatorias</button>
   <button data-v="seg"><b>▤</b>Seguimiento</button>
   <button data-v="ajustes"><b>⚙</b>Ajustes</button>
 </nav>
@@ -330,6 +355,10 @@ let perfil=null,ofertas=[],filtro='nueva',vista='ofertas',borrador=null,archivo=
 const MAX_PERFILES=3;
 const COLORES_P=['#6d28d9','#0f766e','#b45309','#be123c','#1D4ED8'];
 let perfiles=[],perfilSel=lsGet('busqueda.perfilSel',''),destino='nuevo';
+// 26-nov · Convocatorias: el aviso abre la app con ?conv=TOKEN.
+let convs=lsGet('busqueda.convs',[]);
+var convPendiente=new URLSearchParams(location.search).get('conv');
+if(convPendiente)history.replaceState(null,'',location.pathname);
 const perfilDe=id=>perfiles.find(p=>p.id===id);
 async function cargarPerfiles(){
   perfiles=await rest('empleo_perfiles?select=*&user_id=eq.'+sess.uid+'&order=creado.asc')||[];
@@ -357,8 +386,8 @@ const fechaHora=iso=>new Date(iso).toLocaleString('es-CO',{weekday:'short',day:'
 
 /* ---------- vistas ---------- */
 function mostrar(id){
-  ['v-entrada','v-subir','v-perfil','v-nuevo','v-ofertas','v-seg','v-ajustes'].forEach(v=>$(v).classList.toggle('oculto',v!==id));
-  $('nav').classList.toggle('oculto',!['v-ofertas','v-seg','v-ajustes'].includes(id));
+  ['v-entrada','v-subir','v-perfil','v-nuevo','v-ofertas','v-conv','v-seg','v-ajustes'].forEach(v=>$(v).classList.toggle('oculto',v!==id));
+  $('nav').classList.toggle('oculto',!['v-ofertas','v-conv','v-seg','v-ajustes'].includes(id));
   window.scrollTo(0,0);
 }
 function irA(v){
@@ -366,7 +395,8 @@ function irA(v){
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   if(v==='ofertas'){pintarOfertas();mostrar('v-ofertas')}
   if(v==='seg'){pintarSeg();mostrar('v-seg')}
-  if(v==='ajustes'){pintarAjustes();mostrar('v-ajustes')}
+  if(v==='ajustes'){pintarAjustes();mostrar('v-ajustes');pintarConvAjustes()}
+  if(v==='conv'){pintarConvs();mostrar('v-conv');cargarConvs()}
 }
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>irA(b.dataset.v));
 
@@ -374,9 +404,12 @@ async function arrancar(){
   if(!sess){modoEntrada('in');mostrar('v-entrada');return}
   try{await cargarPerfiles()}
   catch(e){if(String(e.message)==='sin_sesion'){modoEntrada('in');mostrar('v-entrada');return}toast('Sin conexión. Mostrando lo último guardado.');perfiles=lsGet('busqueda.perfiles',[]);perfil=perfiles[0]||null}
+  // 26-nov · Si llegó desde una notificación (?conv=TOKEN), se abre esa convocatoria.
+  if(convPendiente){const t=convPendiente;convPendiente=null;await cargarOfertas().catch(()=>{});irA('conv');abrirConvToken(t);return}
   if(!perfiles.some(p=>p.perfil&&p.perfil.cargos&&p.perfil.cargos.length)){abrirSubir(false,'nuevo');return}
   await cargarOfertas();
   irA(vista||'ofertas');
+  cargarConvs();
 }
 async function cargarOfertas(){
   try{ofertas=await rest('empleo_ofertas?select=*&order=score.desc,creada.desc&limit=500')||[];lsSet('busqueda.ofertas',ofertas)}
@@ -730,6 +763,110 @@ $('a-borrar').onclick=async()=>{
   catch(e){toast('No se pudo borrar. Revisa tu conexión.')}
 };
 $('a-salir').onclick=async()=>{const tk=sess&&sess.at;setSess(null);perfil=null;perfiles=[];ofertas=[];['busqueda.perfil','busqueda.perfiles','busqueda.ofertas','busqueda.ciudad','busqueda.perfilSel'].forEach(k=>localStorage.removeItem(k));ciudadSel='';perfilSel='';if(tk)authCall('logout',{},tk).catch(()=>{});arrancar()};
+
+/* ---------- convocatorias (candidato) ---------- */
+// Ver y responder van por el token de la invitación (sirve igual desde el botón de la notificación).
+async function porToken(op,datos){
+  const r=await fetch(FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({op},datos))});
+  let j={};try{j=await r.json()}catch(e){}
+  if(!r.ok)throw new Error(j.mensaje||'No pudimos abrir la convocatoria.');return j;
+}
+const pendienteConv=c=>['enviada','vista'].includes(c.estado)&&c.conv_estado==='abierta';
+function bdgConvs(){const n=convs.filter(pendienteConv).length;$('cv-bdg').textContent=n;$('cv-bdg').classList.toggle('oculto',!n)}
+async function cargarConvs(){
+  if(!sess)return;
+  try{const r=await funcion('mis_convocatorias');convs=r.items||[];lsSet('busqueda.convs',convs)}catch(e){}
+  bdgConvs();if(vista==='conv'&&$('ficha').classList.contains('oculto'))pintarConvs();
+}
+function etiquetaConv(c){
+  if(c.estado==='participa')return '<span class="cvest ok">✓ Estás dentro'+(c.orden?' · puesto '+esc(c.orden):'')+'</span>';
+  if(c.estado==='tarde')return '<span class="cvest gris">Cupo completo</span>';
+  if(c.estado==='no')return '<span class="cvest gris">No te interesó</span>';
+  if(c.conv_estado==='cerrada')return '<span class="cvest gris">Cerrada</span>';
+  if(c.conv_estado==='llena')return '<span class="cvest gris">Cupo completo</span>';
+  const q=c.cupo?c.cupo-c.ocupados:null;
+  return `<span class="cvest ${q!==null&&q<=3?'amb':'azul'}">${q!==null?'Quedan '+q+' de '+esc(c.cupo)+' cupos':'Abierta'} · responde pronto</span>`;
+}
+function pintarConvs(){
+  bdgConvs();
+  $('cv-lista').innerHTML=convs.length?convs.map(c=>`<button class="cv${pendienteConv(c)?' nueva':''}" data-t="${esc(c.token)}"><h3>${esc(c.cargo)}</h3><div class="nota">${esc(c.ciudad)}${c.contrato?' · '+esc(c.contrato):''}${c.empresa?' · '+esc(c.empresa):''}</div>${etiquetaConv(c)}</button>`).join('')
+    :'<div class="vacio">Aún no te han llegado convocatorias.<br>Para recibirlas, actívalas en <b>Ajustes → Convocatorias de empresas</b>.</div>';
+  $('cv-lista').querySelectorAll('.cv').forEach(b=>b.onclick=()=>abrirConvToken(b.dataset.t));
+}
+async function abrirConvToken(t){
+  const local=convs.find(c=>c.token===t);if(local)abrirConvItem(local);
+  try{const r=await porToken('conv_ver',{token:t});const i=convs.findIndex(c=>c.token===t);if(i>=0)convs[i]=r.item;else convs.unshift(r.item);lsSet('busqueda.convs',convs);bdgConvs();abrirConvItem(r.item)}
+  catch(e){if(!local)toast(e.message,4000)}
+}
+function abrirConvItem(c){
+  const dentro=c.estado==='participa';
+  const abierta=c.conv_estado==='abierta'&&['enviada','vista'].includes(c.estado);
+  const q=c.cupo?c.cupo-c.ocupados:null;
+  const bloq=(k,v)=>`<div class="dato"><span>${k}</span><span class="v">${dentro?esc(v||'—'):'<span class="borroso">'+esc(v?'xxxxxxxxxx':'xxxxxx')+'</span>'}</span></div>`;
+  const wa=dentro&&c.telefono?'https://wa.me/57'+String(c.telefono).replace(/\D/g,'').replace(/^57/,''):'';
+  $('ficha').innerHTML=`
+  <div class="hcab${dentro?' dentro':''}" style="${dentro?'color:#fff':''}"><button class="volver" id="cv-volver" style="${dentro?'color:#fff':''}">‹ Convocatorias</button>
+    <h2 style="margin-top:10px">${dentro?'¡Estás dentro! 🎉':esc(c.cargo)}</h2><div class="emp" style="${dentro?'color:#d1fae5':''}">${esc(c.cargo)} · ${esc(c.ciudad)}${c.cierra_en?' · cierra el '+esc(new Date(c.cierra_en).toLocaleDateString('es-CO',{day:'numeric',month:'short'})):''}</div></div>
+  <div class="cuerpo">
+    <div class="box">${etiquetaConv(c)}</div>
+    <div class="box"><h4>La convocatoria</h4>
+      <div class="dato"><span>Ciudad</span><span class="v">${esc(c.ciudad)}</span></div>
+      ${c.contrato?`<div class="dato"><span>Contrato</span><span class="v">${esc(c.contrato)}</span></div>`:''}
+      ${c.jornada?`<div class="dato"><span>Jornada</span><span class="v">${esc(c.jornada)}</span></div>`:''}
+      ${c.vacantes?`<div class="dato"><span>Vacantes</span><span class="v">${esc(c.vacantes)}</span></div>`:''}</div>
+    <div class="box"><h4>${dentro?'Empresa y condiciones':'🔒 Se desbloquea si entras en el cupo'}</h4>
+      ${bloq('Empresa',c.empresa)}${bloq('Lugar de trabajo',c.lugar)}${bloq('Salario',c.salario)}${bloq('Contacto',[c.contacto,c.telefono].filter(Boolean).join(' · '))}
+      ${dentro&&c.descripcion?`<div class="nota" style="color:var(--tinta)">${esc(c.descripcion)}</div>`:''}</div>
+    ${c.por_que?`<div class="box"><h4>Por qué te llegó</h4><div class="txt13">${esc(c.por_que)}</div></div>`:''}
+    ${abierta?`<div class="box"><div class="nota" style="margin:0">Los cupos se llenan por orden de llegada${q!==null?': quedan <b>'+q+'</b>':''}. Si participas, la empresa verá tu hoja de vida y tu contacto. Si no, nunca sabrá que te llegó.</div></div>
+      <button class="btn p" id="cv-si">✓ Quiero participar</button><button class="btn" id="cv-no">No me interesa</button>`:''}
+    ${dentro?`<div class="box"><div class="nota" style="margin:0">La empresa ya ve tu hoja de vida y te contactará. También puedes escribirle tú.</div></div>${wa?`<a class="btn p" href="${esc(wa)}" target="_blank" rel="noopener">💬 Escribir por WhatsApp</a>`:''}`:''}
+    ${c.estado==='tarde'?`<div class="box"><div class="txt13"><b>Cupo completo.</b> Esta vez se llenaron los cupos antes de tu respuesta. Te avisaremos de la próxima que encaje contigo.</div></div>`:''}
+  </div>`;
+  $('ficha').classList.remove('oculto');$('ficha').scrollTop=0;
+  $('cv-volver').onclick=()=>{$('ficha').classList.add('oculto');irA('conv')};
+  const si=$('cv-si'),no=$('cv-no');
+  if(si)si.onclick=()=>responderConv(c.token,true,si);
+  if(no)no.onclick=()=>responderConv(c.token,false,no);
+}
+async function responderConv(t,quiere,btn){
+  btn.disabled=true;
+  try{const r=await porToken('responder',{token:t,quiere});
+    const i=convs.findIndex(c=>c.token===t);if(i>=0)convs[i]=r.item;lsSet('busqueda.convs',convs);bdgConvs();
+    const e=r.resultado&&r.resultado.r_estado;
+    toast(e==='participa'?'¡Entraste en el cupo!':e==='tarde'?'El cupo ya se había llenado.':'Listo, no te volveremos a mostrar esta.',3500);
+    abrirConvItem(r.item);
+  }catch(e){toast(e.message,4000);btn.disabled=false}
+}
+// Ajustes → Convocatorias de empresas
+async function pintarConvAjustes(){
+  try{const r=await funcion('candidato_get');$('cv-recibir').checked=!!r.recibir;$('cv-celular').value=r.celular||'';
+    const permiso=('Notification'in window)?Notification.permission:'no';
+    $('cv-estado').textContent=(r.recibir?'Recibes convocatorias. ':'No recibes convocatorias. ')+(r.dispositivos?`Avisos activos en ${r.dispositivos} dispositivo${r.dispositivos>1?'s':''}.`:'Aún no has activado los avisos en ningún celular.')+(permiso==='denied'?' Los avisos están bloqueados en este navegador: actívalos en su configuración.':'');
+  }catch(e){$('cv-estado').textContent='No se pudo cargar ahora.'}
+}
+$('cv-guardar').onclick=async()=>{
+  const recibir=$('cv-recibir').checked,cel=$('cv-celular').value.trim();
+  if(recibir&&cel.replace(/\D/g,'').length<10){toast('Escribe tu celular (10 dígitos) para que la empresa pueda contactarte.');return}
+  try{await funcion('candidato_set',{recibir,celular:cel});toast(recibir?'Listo: recibirás convocatorias.':'Ya no recibirás convocatorias.');pintarConvAjustes()}
+  catch(e){toast(e.message)}
+};
+const b64u=s=>Uint8Array.from(atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+$('cv-avisos').onclick=async()=>{
+  if(!('serviceWorker'in navigator)||!('PushManager'in window)||!('Notification'in window)){
+    toast(/iPhone|iPad/.test(navigator.userAgent)?'En iPhone, primero instala la app: Compartir → «Agregar a inicio», y ábrela desde el ícono.':'Este navegador no permite avisos.',5000);return}
+  try{
+    const p=await Notification.requestPermission();
+    if(p!=='granted'){toast('No diste permiso para los avisos.');return}
+    const reg=await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){const k=await porToken('key',{});sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(k.key)})}
+    await funcion('suscribir',{sub:sub.toJSON()});
+    toast('Avisos activados en este dispositivo.');pintarConvAjustes();
+  }catch(e){toast('No se pudieron activar los avisos: '+(e.message||e),5000)}
+};
+// El service worker avisa cuando se toca una notificación con la app abierta.
+if('serviceWorker'in navigator)navigator.serviceWorker.addEventListener('message',ev=>{const d=ev.data||{};if(d.conv){if(sess){irA('conv');abrirConvToken(d.conv)}else convPendiente=d.conv}if(d.actualizar)cargarConvs()});
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sess&&perfil&&!buscando)cargarOfertas().then(()=>{if(['ofertas','seg'].includes(vista)&&$('ficha').classList.contains('oculto'))irA(vista)})});
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});

@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#064e3b">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>Convocatorias · Empresas</title>
+<style>
+:root{--verde:#047857;--verde2:#064e3b;--verdef:#ecfdf5;--tinta:#0f172a;--gris:#64748b;--linea:#e2e8f0;--fondo:#f4f6fb;--roj:#b91c1c;--amb:#b45309;--ambf:#fef3c7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--fondo);color:var(--tinta);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{max-width:560px;margin:0 auto;min-height:100vh}
+button,input,select,textarea{font:inherit;font-size:16px}
+button{cursor:pointer}
+.oculto{display:none!important}
+.cab{background:linear-gradient(135deg,var(--verde2),var(--verde));color:#fff;padding:calc(env(safe-area-inset-top) + 18px) 18px 46px}
+.cab small{opacity:.85;font-size:12.5px}.cab h2{margin:3px 0 0;font-size:21px;line-height:1.25}
+.cab .acc{float:right;background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:10px;padding:6px 10px;font-size:13px}
+.cuerpo{padding:0 14px 30px;margin-top:-30px;display:flex;flex-direction:column;gap:10px;position:relative}
+.box{background:#fff;border-radius:14px;padding:12px 13px}
+.box h4{margin:0 0 8px;font-size:12px;color:var(--gris);text-transform:uppercase;letter-spacing:.04em}
+label.l{display:block;font-size:12.5px;color:var(--gris);margin:8px 0 3px}
+input,select,textarea{width:100%;border:1px solid var(--linea);border-radius:10px;padding:10px;background:#fff;color:var(--tinta)}
+textarea{min-height:80px;resize:vertical}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{border-radius:12px;padding:13px;text-align:center;font-size:15px;font-weight:600;border:1px solid var(--linea);background:#fff;color:var(--tinta);width:100%}
+.btn.p{background:var(--verde);color:#fff;border-color:var(--verde)}
+.btn[disabled]{opacity:.5}
+.nota{font-size:12.5px;color:var(--gris);line-height:1.45;margin-top:6px}
+.err{color:var(--roj);font-size:13.5px;margin-top:8px}.ok{color:var(--verde);font-size:13.5px;margin-top:8px}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:13px;padding:5px 8px;border-radius:8px;background:var(--verdef);color:var(--verde);margin:0 5px 6px 0}
+.tag button{border:0;background:none;color:inherit;padding:0 2px;font-size:15px}
+.add{display:flex;gap:6px}.add input{flex:1}.add button{border:1px dashed #94a3b8;background:#fff;border-radius:10px;padding:0 12px;color:var(--gris)}
+.tramos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tr{border:1.5px solid var(--linea);border-radius:12px;padding:11px;text-align:center;background:#fff;color:var(--tinta)}
+.tr b{display:block;font-size:17px}.tr small{font-size:12px;color:var(--gris)}
+.tr.on{border-color:var(--verde);background:var(--verdef);box-shadow:0 0 0 2px #a7f3d0}
+.tr[disabled]{opacity:.45}
+.tr.ancho{grid-column:1/-1}
+.big{display:flex;align-items:center;gap:12px;background:var(--verdef);border:1px solid #a7f3d0;border-radius:14px;padding:12px}
+.big>b{font-size:32px;color:var(--verde);line-height:1}.big div{font-size:13.5px;line-height:1.4}
+.kpi{display:flex;gap:6px}.kpi div{flex:1;background:#fff;border-radius:12px;padding:9px 4px;text-align:center}
+.kpi b{display:block;font-size:20px}.kpi span{font-size:11px;color:var(--gris)}
+.barra{display:flex;gap:2px;margin-top:8px;height:8px;background:#d1fae5;border-radius:4px;overflow:hidden}.barra i{background:var(--verde);display:block}
+.conv{background:#fff;border-radius:14px;padding:12px 13px;border:0;text-align:left;width:100%;color:inherit;display:block}
+.conv h3{margin:0;font-size:15px}.conv .nota{margin-top:3px}
+.est{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;margin-left:6px;vertical-align:2px}
+.est.abierta{background:#dbeafe;color:#1D4ED8}.est.llena{background:var(--verdef);color:var(--verde)}.est.cerrada{background:#e2e8f0;color:#475569}.est.borrador{background:var(--ambf);color:var(--amb)}
+.persona{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1f5f9}
+.persona:last-child{border-bottom:0}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none;background:var(--verde)}
+.persona b{font-size:14px}.persona small{display:block;font-size:12.5px;color:var(--gris);line-height:1.4;margin-top:2px}
+.persona a{color:var(--verde);font-weight:600;text-decoration:none}
+.sc{margin-left:auto;font-weight:700;color:var(--verde);flex:none}
+.cargando{display:inline-block;width:16px;height:16px;border:2px solid #a7f3d0;border-top-color:var(--verde);border-radius:50%;animation:g .8s linear infinite;vertical-align:-3px;margin-right:6px}
+@keyframes g{to{transform:rotate(360deg)}}
+.vacio{text-align:center;color:var(--gris);padding:26px 16px;font-size:14px;line-height:1.5;background:#fff;border-radius:14px}
+.entrada{padding:calc(env(safe-area-inset-top) + 40px) 22px 30px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 14px;border-radius:12px;font-size:14px;z-index:20;max-width:90%;text-align:center}
+.volver{background:none;border:0;color:#fff;font-size:14px;padding:0;opacity:.9}
+/* 26-nov · dictado y campos obligatorios */
+.req{color:#dc2626;font-weight:700}
+.falta{border:2px solid #dc2626!important;background:#fef2f2!important}
+.falta-msg{background:#fef2f2;border:1.5px solid #fca5a5;color:#991b1b;border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.45}
+.mic{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;color:#fff;background:linear-gradient(135deg,#064e3b,#059669)}
+.mic.on{background:linear-gradient(135deg,#991b1b,#dc2626);animation:lat 1.2s ease-in-out infinite}
+@keyframes lat{50%{box-shadow:0 0 0 8px rgba(220,38,38,.18)}}
+.red{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:10px 13px}
+.red b{font-size:22px;color:var(--verde)}
+.demo{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px;background:#e2e8f0;color:#475569;margin-left:4px;vertical-align:1px}
+</style>
+</head>
+<body>
+
+<section id="v-entrada" class="entrada oculto">
+  <div style="font-size:40px">🏢</div>
+  <h1 style="font-size:24px;margin:10px 0 4px">Convocatorias para empresas</h1>
+  <div class="nota" style="font-size:14px">Publica un cargo y avisamos al celular de las personas que cumplen el perfil.</div>
+  <form id="f-entrada" style="margin-top:18px">
+    <label class="l">Correo</label><input id="e-correo" type="email" autocomplete="email" required>
+    <label class="l">Contraseña</label><input id="e-clave" type="password" autocomplete="current-password" required>
+    <button class="btn p" style="margin-top:16px" id="e-ir">Entrar</button>
+  </form>
+  <div id="e-msg"></div>
+</section>
+
+<section id="v-sin" class="entrada oculto">
+  <div style="font-size:40px">🔒</div>
+  <h1 style="font-size:22px">Esta cuenta no está habilitada como empresa</h1>
+  <div class="nota" style="font-size:14px">En el piloto, las empresas se habilitan una por una. Escríbenos para activarla.</div>
+  <button class="btn" style="margin-top:16px" id="sin-salir">Cerrar sesión</button>
+</section>
+
+<!-- LISTA -->
+<section id="v-lista" class="oculto">
+  <div class="cab"><button class="acc" id="l-salir">Salir</button><small id="l-empresa"></small><h2>Tus convocatorias</h2></div>
+  <div class="cuerpo">
+    <div class="red oculto" id="l-red"><b id="l-red-n">0</b><div class="nota" style="margin:0;font-size:13.5px;color:var(--tinta)">personas tienen la app y reciben convocatorias</div></div>
+    <button class="btn p" id="l-nueva">+ Nueva convocatoria</button>
+    <div id="l-convs"></div>
+  </div>
+</section>
+
+<!-- E1 · NUEVA -->
+<section id="v-nueva" class="oculto">
+  <div class="cab"><button class="acc" id="n-cancelar">Cancelar</button><small>Nueva convocatoria</small><h2>¿A quién estás buscando?</h2></div>
+  <div class="cuerpo">
+    <div class="box"><h4>🎤 Dicta la vacante</h4>
+      <button class="mic" id="v-mic">🎤 Tocar y hablar</button>
+      <textarea id="v-texto" style="margin-top:8px;min-height:90px" placeholder="Ej.: «Necesito 6 auxiliares de bodega en Cali, contrato a término fijo, salario de un millón novecientos, de lunes a sábado por turnos, con 6 meses de experiencia. Es en la sede de Acopi y preguntan por Selección al 300 000 0000»"></textarea>
+      <button class="btn" style="margin-top:8px" id="v-ordenar">✨ Llenar el formulario con lo que dije</button>
+      <div class="nota" id="v-nota">También puedes escribirla o usar el micrófono del teclado. Lo que falte te lo marcamos en rojo.</div>
+    </div>
+    <div id="n-faltan"></div>
+    <div class="box">
+      <label class="l" style="margin-top:0">Cargo <span class="req">*</span></label><input id="n-cargo" maxlength="120" placeholder="Ej. Auxiliar de bodega">
+      <div class="dos"><div><label class="l">Ciudad <span class="req">*</span></label><input id="n-ciudad" maxlength="60" placeholder="Ej. Cali"></div><div><label class="l">Vacantes <span class="req">*</span></label><input id="n-vacantes" type="number" min="1" inputmode="numeric"></div></div>
+      <div class="dos"><div><label class="l">Salario <span class="req">*</span></label><input id="n-salario" maxlength="60" placeholder="Ej. $1.900.000"></div><div><label class="l">Contrato <span class="req">*</span></label><input id="n-contrato" maxlength="60" placeholder="Ej. Término fijo"></div></div>
+      <label class="l">Jornada <span class="req">*</span></label><input id="n-jornada" maxlength="120" placeholder="Ej. Lunes a sábado, turnos">
+    </div>
+    <div class="box"><h4>Requisitos</h4>
+      <div id="n-reqs"></div>
+      <div class="add"><input id="n-req" maxlength="80" placeholder="Ej. 6 meses en bodega"><button id="n-req-a">+ Agregar</button></div>
+      <div class="nota">Con esto encontramos a quién le encaja.</div>
+    </div>
+    <div class="box"><h4>Descripción</h4><textarea id="n-desc" maxlength="3000" placeholder="Funciones, beneficios, lo que la persona debe saber…"></textarea></div>
+    <div class="box"><h4>🔒 Sólo para quien entre en el cupo</h4>
+      <label class="l" style="margin-top:0">Lugar de trabajo <span class="req">*</span></label><input id="n-lugar" maxlength="160" placeholder="Dirección o sede">
+      <label class="l">Contacto de la convocatoria <span class="req">*</span></label><input id="n-contacto" maxlength="160" placeholder="Ej. Selección · 300 000 0000">
+      <div class="nota">El salario, la empresa, el lugar y el contacto sólo los ven las personas que entren en el cupo.</div>
+    </div>
+    <button class="btn p" id="n-ver">Ver a cuántas personas les encaja →</button>
+    <div id="n-msg"></div>
+  </div>
+</section>
+
+<!-- E2 · CUPO -->
+<section id="v-cupo" class="oculto">
+  <div class="cab"><small id="c-sub"></small><h2>¿Cuántas personas necesitas?</h2></div>
+  <div class="cuerpo">
+    <div class="big"><b id="c-encajan">0</b><div><b>personas cumplen el perfil</b> y aceptaron recibir convocatorias.<br><span class="nota" id="c-mezcla"></span></div></div>
+    <div class="box"><h4>Cupo de la convocatoria</h4><div class="tramos" id="c-tramos"></div></div>
+    <div class="box" id="c-resumen" style="background:var(--verdef)"></div>
+    <button class="btn p" id="c-lanzar" disabled>Lanzar convocatoria</button>
+    <button class="btn" id="c-despues">Guardar y lanzar después</button>
+    <div id="c-msg"></div>
+  </div>
+</section>
+
+<!-- E3 · DETALLE -->
+<section id="v-detalle" class="oculto">
+  <div class="cab"><button class="volver" id="d-volver">‹ Convocatorias</button><br><small id="d-sub"></small><h2 id="d-cargo"></h2></div>
+  <div class="cuerpo">
+    <div class="kpi" id="d-kpi"></div>
+    <div class="box" id="d-cupo"></div>
+    <div class="box"><h4 id="d-titulo">En el cupo</h4><div id="d-personas"></div></div>
+    <div class="box"><div class="nota" id="d-privado" style="margin:0"></div></div>
+    <button class="btn" id="d-excel">Exportar participantes (Excel)</button>
+    <button class="btn p oculto" id="d-lanzar">Elegir cupo y lanzar</button>
+  </div>
+</section>
+
+<script>
+'use strict';
+const SB='https://hlnxrveoytobqrwrbdvi.supabase.co',SBKEY='sb_publishable_7lUwaSXNtHss01LRoIfM3A_0N3RwWNK',FN=SB+'/functions/v1/empleo';
+const $=id=>document.getElementById(id);
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(t,ms){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),ms||3000)}
+let sess=lsGet('empresa.session',null),refrescando=null;
+const setSess=s=>{sess=s;lsSet('empresa.session',s)};
+async function authCall(path,body,tk){const h={'Content-Type':'application/json',apikey:SBKEY};if(tk)h.Authorization='Bearer '+tk;
+  const r=await fetch(SB+'/auth/v1/'+path,{method:'POST',headers:h,body:JSON.stringify(body||{})});let j={};try{j=await r.json()}catch(e){}return{ok:r.ok,status:r.status,j}}
+const tomar=j=>setSess({at:j.access_token,rt:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000,email:j.user.email});
+function token(){
+  if(!sess)return Promise.resolve(null);
+  if(sess.exp-60000>Date.now())return Promise.resolve(sess.at);
+  if(!refrescando)refrescando=(async()=>{try{const r=await authCall('token?grant_type=refresh_token',{refresh_token:sess.rt});if(r.ok){tomar(r.j);return sess.at}if(r.status<500){setSess(null)}return null}finally{refrescando=null}})();
+  return refrescando;
+}
+async function fn(op,datos){const tk=await token();if(!tk){mostrar('v-entrada');throw new Error('Vuelve a entrar.')}
+  const r=await fetch(FN,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tk},body:JSON.stringify(Object.assign({op},datos||{}))});
+  let j={};try{j=await r.json()}catch(e){}
+  if(r.status===401){setSess(null);mostrar('v-entrada');throw new Error('Vuelve a entrar.')}
+  if(!r.ok){const e=new Error(j.mensaje||'No pudimos completar eso. Intenta de nuevo.');e.codigo=j.error;throw e}return j}
+function mostrar(id){['v-entrada','v-sin','v-lista','v-nueva','v-cupo','v-detalle'].forEach(v=>$(v).classList.toggle('oculto',v!==id));window.scrollTo(0,0)}
+
+/* ---------- entrada ---------- */
+$('f-entrada').onsubmit=async ev=>{ev.preventDefault();$('e-ir').disabled=true;$('e-msg').innerHTML='';
+  try{const r=await authCall('token?grant_type=password',{email:$('e-correo').value.trim(),password:$('e-clave').value});
+    if(!r.ok){$('e-msg').innerHTML='<div class="err">Correo o contraseña no coinciden.</div>';return}tomar(r.j);arrancar()}
+  catch(e){$('e-msg').innerHTML='<div class="err">Sin conexión.</div>'}finally{$('e-ir').disabled=false}};
+const salir=()=>{setSess(null);mostrar('v-entrada')};
+$('sin-salir').onclick=salir;$('l-salir').onclick=salir;
+
+let empresa=null,convs=[],actual=null,tramoSel=null;
+async function arrancar(){
+  if(!sess){mostrar('v-entrada');return}
+  try{const r=await fn('empresa_yo');empresa=r.empresa;if(!empresa){mostrar('v-sin');return}
+    $('l-red-n').textContent=r.red||0;$('l-red').classList.toggle('oculto',!r.red);await cargar()}
+  catch(e){toast(e.message)}
+}
+async function cargar(){
+  const r=await fn('conv_listar');convs=r.convocatorias||[];
+  $('l-empresa').textContent=empresa.nombre;
+  $('l-convs').innerHTML=convs.length?convs.map(c=>{
+    const cupo=c.cupo?`${c.participan}/${c.cupo} en el cupo`:`${c.participan} participan`;
+    const info=c.estado==='borrador'?`${c.encajan} encajan · sin lanzar`:`${c.invitados} invitadas · ${cupo}`+(c.estado==='abierta'&&c.cierra_en?` · cierra ${new Date(c.cierra_en).toLocaleDateString('es-CO',{day:'numeric',month:'short'})}`:'');
+    return `<button class="conv" data-id="${esc(c.id)}"><h3>${esc(c.cargo)}<span class="est ${esc(c.estado)}">${{borrador:'Sin lanzar',abierta:'Abierta',llena:'Cupo lleno',cerrada:'Cerrada'}[c.estado]||esc(c.estado)}</span></h3><div class="nota">${esc(c.ciudad)} · ${esc(info)}</div></button>`}).join('')
+    :'<div class="vacio">Todavía no has creado convocatorias.<br>Toca «+ Nueva convocatoria».</div>';
+  $('l-convs').querySelectorAll('.conv').forEach(b=>b.onclick=()=>abrirDetalle(b.dataset.id));
+  mostrar('v-lista');
+}
+
+/* ---------- E1 · nueva ---------- */
+let reqs=[];
+function pintarReqs(){$('n-reqs').innerHTML=reqs.map((t,i)=>`<span class="tag">${esc(t)}<button data-i="${i}" aria-label="Quitar">✕</button></span>`).join('');
+  $('n-reqs').querySelectorAll('button').forEach(b=>b.onclick=()=>{reqs.splice(+b.dataset.i,1);pintarReqs()})}
+$('n-req-a').onclick=()=>{const v=$('n-req').value.trim();if(v&&reqs.length<12&&!reqs.includes(v))reqs.push(v);$('n-req').value='';pintarReqs()};
+$('n-req').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('n-req-a').click()}};
+// 26-nov · Campos obligatorios: si falta alguno, recuadro rojo + aviso arriba.
+const OBLIG=[['n-cargo','Cargo'],['n-ciudad','Ciudad'],['n-vacantes','Vacantes'],['n-salario','Salario'],['n-contrato','Contrato'],['n-jornada','Jornada'],['n-lugar','Lugar de trabajo'],['n-contacto','Contacto']];
+function revisarFaltan(mostrarAviso){
+  const faltan=OBLIG.filter(([id])=>!String($(id).value||'').trim());
+  OBLIG.forEach(([id])=>$(id).classList.toggle('falta',faltan.some(f=>f[0]===id)&&mostrarAviso));
+  $('n-faltan').innerHTML=faltan.length&&mostrarAviso?`<div class="falta-msg"><b>Falta${faltan.length>1?'n':''} ${faltan.length} dato${faltan.length>1?'s':''}:</b> ${faltan.map(f=>f[1]).join(', ')}. Complétalo${faltan.length>1?'s':''} en los recuadros rojos (o díctalo otra vez).</div>`:'';
+  return faltan;
+}
+OBLIG.forEach(([id])=>$(id).addEventListener('input',()=>{if($(id).value.trim())$(id).classList.remove('falta');if($('n-faltan').innerHTML)revisarFaltan(true)}));
+
+// Dictado con el reconocimiento de voz del navegador (Chrome, Android, Safari).
+const Reco=window.SpeechRecognition||window.webkitSpeechRecognition;
+let reco=null,escuchando=false,base='';
+if(!Reco){$('v-mic').textContent='🎤 Usa el micrófono del teclado';$('v-mic').onclick=()=>$('v-texto').focus()}
+else $('v-mic').onclick=()=>{
+  if(escuchando){reco.stop();return}
+  reco=new Reco();reco.lang='es-CO';reco.continuous=true;reco.interimResults=true;
+  base=$('v-texto').value.trim();base=base?base+' ':'';
+  reco.onresult=ev=>{let fin='',tmp='';for(let i=0;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)fin+=t+' ';else tmp+=t}$('v-texto').value=(base+fin+tmp).trim()};
+  reco.onerror=ev=>{$('v-nota').textContent=ev.error==='not-allowed'?'No diste permiso al micrófono. Puedes escribirla o usar el micrófono del teclado.':'No te escuchamos bien. Intenta de nuevo o escríbela.'};
+  reco.onend=()=>{escuchando=false;$('v-mic').classList.remove('on');$('v-mic').textContent='🎤 Tocar y hablar';if($('v-texto').value.trim().length>20)$('v-ordenar').click()};
+  reco.start();escuchando=true;$('v-mic').classList.add('on');$('v-mic').textContent='⏹ Escuchando… toca para terminar';$('v-nota').textContent='Habla con calma: cargo, ciudad, cuántas personas, salario, contrato, jornada, requisitos, dónde es y a quién preguntar.';
+};
+$('v-ordenar').onclick=async()=>{
+  const texto=$('v-texto').value.trim();
+  if(texto.length<10){toast('Primero dicta o escribe la vacante.');return}
+  $('v-ordenar').disabled=true;$('v-ordenar').innerHTML='<span class="cargando"></span>Ordenando lo que dijiste…';
+  try{
+    const v=(await fn('conv_extraer',{texto})).vacante||{};
+    const pon=(id,val)=>{if(val!==undefined&&val!==null&&String(val).trim())$(id).value=String(val).trim()};
+    pon('n-cargo',v.cargo);pon('n-ciudad',v.ciudad);pon('n-vacantes',v.vacantes);pon('n-salario',v.salario);pon('n-contrato',v.contrato);
+    pon('n-jornada',v.jornada);pon('n-desc',v.descripcion);pon('n-lugar',v.lugar);pon('n-contacto',v.contacto);
+    (v.requisitos||[]).forEach(r=>{r=String(r).trim();if(r&&reqs.length<12&&!reqs.includes(r))reqs.push(r)});pintarReqs();
+    const f=revisarFaltan(true);
+    toast(f.length?`Listo. Falta${f.length>1?'n':''} ${f.length} dato${f.length>1?'s':''}: están en rojo.`:'¡Listo! Revisa y continúa.',3500);
+    if(f.length)$(f[0][0]).scrollIntoView({behavior:'smooth',block:'center'});
+  }catch(e){toast(e.message,4000)}
+  finally{$('v-ordenar').disabled=false;$('v-ordenar').textContent='✨ Llenar el formulario con lo que dije'}
+};
+
+$('l-nueva').onclick=()=>{['n-cargo','n-ciudad','n-vacantes','n-salario','n-contrato','n-jornada','n-desc','n-lugar','n-contacto','n-req','v-texto'].forEach(i=>$(i).value='');
+  if(empresa.ciudad)$('n-ciudad').value=empresa.ciudad;reqs=[];pintarReqs();revisarFaltan(false);$('n-msg').innerHTML='';mostrar('v-nueva')};
+$('n-cancelar').onclick=()=>{if(escuchando&&reco)reco.stop();mostrar('v-lista')};
+$('n-ver').onclick=async()=>{
+  const f=revisarFaltan(true);
+  if(f.length){$('n-msg').innerHTML=`<div class="err">Completa lo que está en rojo: ${f.map(x=>x[1]).join(', ')}.</div>`;$(f[0][0]).scrollIntoView({behavior:'smooth',block:'center'});$(f[0][0]).focus();return}
+  $('n-ver').disabled=true;$('n-msg').innerHTML='<div class="nota"><span class="cargando"></span>Buscando a quién le encaja… puede tardar unos 30 segundos.</div>';
+  try{
+    const r=await fn('conv_crear',{cargo:$('n-cargo').value,ciudad:$('n-ciudad').value,vacantes:$('n-vacantes').value,salario:$('n-salario').value,contrato:$('n-contrato').value,
+      jornada:$('n-jornada').value,descripcion:$('n-desc').value,requisitos:reqs,lugar:$('n-lugar').value,contacto:$('n-contacto').value});
+    actual={id:r.id,cargo:$('n-cargo').value.trim(),ciudad:$('n-ciudad').value.trim(),encajan:r.encajan,alto:r.alto,medio:r.medio};
+    abrirCupo();
+  }catch(e){$('n-msg').innerHTML=`<div class="err">${esc(e.message)}</div>`}
+  finally{$('n-ver').disabled=false}
+};
+
+/* ---------- E2 · cupo ---------- */
+const TRAMOS=[['1-10',1,10],['11-20',11,20],['21-50',21,50],['51-100',51,100],['100+',101,null]];
+function abrirCupo(){
+  const n=actual.encajan;tramoSel=null;
+  $('c-sub').textContent=`${actual.cargo} · ${actual.ciudad}`;$('c-encajan').textContent=n;
+  $('c-mezcla').textContent=n?`Encaje alto (8-10): ${actual.alto||0} · medio (6-7): ${actual.medio||0}`:'Todavía no hay personas con ese perfil. Prueba con otros requisitos o carga más candidatos.';
+  $('c-tramos').innerHTML=TRAMOS.map(([t,min,cupo])=>{const ok=n>=min;const inv=cupo?Math.min(n,cupo*2):n;
+    const txt=!ok?`no alcanza: hay ${n}`:cupo?`cupo ${cupo} · invita a ${inv===cupo*2?inv:'las '+inv+' que hay'}`:`invita a las ${n} · sin cupo`;
+    return `<button class="tr${t==='100+'?' ancho':''}" data-t="${t}" ${ok?'':'disabled'}><b>${t==='100+'?'Más de 100':t.replace('-',' – ')}</b><small>${txt}</small></button>`}).join('');
+  $('c-tramos').querySelectorAll('.tr').forEach(b=>b.onclick=()=>{tramoSel=b.dataset.t;$('c-tramos').querySelectorAll('.tr').forEach(x=>x.classList.toggle('on',x===b));resumen()});
+  resumen();$('c-msg').innerHTML='';mostrar('v-cupo');
+}
+function resumen(){
+  const el=$('c-resumen');
+  if(!tramoSel){el.innerHTML='<div class="nota" style="margin:0">Elige un tramo. La app invita al <b>doble</b> del cupo (las personas de mayor encaje) y entran los primeros que apliquen.</div>';$('c-lanzar').disabled=true;return}
+  const [,,cupo]=TRAMOS.find(x=>x[0]===tramoSel);const inv=cupo?Math.min(actual.encajan,cupo*2):actual.encajan;
+  el.innerHTML=cupo?`<div style="font-size:14px;line-height:1.5"><b>${inv} personas</b> recibirán la notificación. <b>Sólo los primeros ${cupo}</b> que apliquen verán el contacto, el lugar de trabajo y las condiciones. Se cierra al llenarse o a los 7 días.</div>`
+    :`<div style="font-size:14px;line-height:1.5"><b>Las ${inv} personas</b> que cumplen el perfil recibirán la notificación. Todas las que apliquen verán el contacto y las condiciones. Se cierra a los 7 días.</div>`;
+  $('c-lanzar').disabled=false;$('c-lanzar').textContent=`Lanzar convocatoria a ${inv} personas`;
+}
+$('c-lanzar').onclick=async()=>{
+  $('c-lanzar').disabled=true;$('c-msg').innerHTML='<div class="nota"><span class="cargando"></span>Enviando las notificaciones…</div>';
+  try{const r=await fn('conv_lanzar',{id:actual.id,tramo:tramoSel});
+    toast(`Convocatoria lanzada: ${r.invitados} personas invitadas (${r.con_aviso} con aviso al celular).`,4500);
+    await cargar();abrirDetalle(actual.id)}
+  catch(e){$('c-msg').innerHTML=`<div class="err">${esc(e.message)}</div>`;$('c-lanzar').disabled=false}
+};
+$('c-despues').onclick=()=>cargar();
+
+/* ---------- E3 · detalle ---------- */
+let detalle=null;
+async function abrirDetalle(id){
+  try{
+    const r=await fn('conv_detalle',{id});detalle=r;const c=r.convocatoria;const res=convs.find(x=>x.id===id)||{};
+    $('d-sub').textContent=`${c.ciudad} · ${c.estado==='borrador'?'sin lanzar':'lanzada '+new Date(c.lanzada).toLocaleDateString('es-CO',{day:'numeric',month:'short'})}`;
+    $('d-cargo').textContent=c.cargo;
+    $('d-kpi').innerHTML=`<div><b>${c.invitados||0}</b><span>invitadas</span></div><div><b>${res.vieron||0}</b><span>la vieron</span></div><div><b>${res.participan||0}</b><span>en el cupo</span></div><div><b>${res.no||0}</b><span>no</span></div>`;
+    const dentro=r.personas.length;
+    $('d-cupo').innerHTML=c.cupo?`<div style="display:flex;justify-content:space-between;font-size:14px"><b>Cupo: ${dentro} de ${c.cupo}</b><span class="nota" style="margin:0">${c.estado==='llena'?'¡lleno!':'quedan '+(c.cupo-dentro)}</span></div><div class="barra"><i style="width:${Math.min(100,dentro/c.cupo*100)}%"></i></div>${res.tarde?`<div class="nota">${res.tarde} persona${res.tarde>1?'s':''} llegaron cuando ya estaba lleno.</div>`:''}`
+      :`<div style="font-size:14px"><b>Sin cupo</b> · ${dentro} participan</div>`;
+    $('d-titulo').textContent=`En el cupo · ${dentro}${dentro?' (por orden de llegada)':''}`;
+    $('d-personas').innerHTML=dentro?r.personas.map(p=>{const ini=String(p.nombre||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const wa=p.celular?'https://wa.me/57'+String(p.celular).replace(/\D/g,'').replace(/^57/,''):'';
+      return `<div class="persona"><div class="av">${esc(ini)}</div><div style="flex:1;min-width:0"><b>${esc(p.orden)}. ${esc(p.nombre)}</b>${p.demo?'<span class="demo">demo</span>':''}<small>${esc((p.cargos||[]).join(' · '))}${p.ciudades&&p.ciudades.length?' · '+esc(p.ciudades.join(', ')):''}</small>
+        ${p.resumen?`<small>${esc(p.resumen)}</small>`:''}<small>${p.correo?`<a href="mailto:${esc(p.correo)}">${esc(p.correo)}</a>`:''}${p.celular?` · <a href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp ${esc(p.celular)}</a>`:''}</small></div><span class="sc">${esc(p.score)}</span></div>`}).join('')
+      :`<div class="nota" style="margin:0">${c.estado==='borrador'?'Esta convocatoria aún no se ha lanzado.':'Todavía nadie ha aplicado. Las notificaciones ya salieron.'}</div>`;
+    const otras=Math.max(0,(c.invitados||0)-dentro);
+    $('d-privado').textContent=`🔒 ${otras?'Las otras '+otras+' personas invitadas no se muestran':'Las personas invitadas no se muestran'}: sólo aparece quien entró en el cupo.`;
+    $('d-excel').classList.toggle('oculto',!dentro);
+    $('d-lanzar').classList.toggle('oculto',c.estado!=='borrador');
+    $('d-lanzar').onclick=()=>{actual={id:c.id,cargo:c.cargo,ciudad:c.ciudad,encajan:c.encajan,alto:0,medio:c.encajan};abrirCupo()};
+    mostrar('v-detalle');
+  }catch(e){toast(e.message)}
+}
+$('d-volver').onclick=()=>cargar();
+$('d-excel').onclick=()=>{
+  if(!detalle)return;const c=detalle.convocatoria;
+  const filas=[['Orden','Nombre','Correo','Celular','Encaje','Cargos','Ciudades','Resumen']].concat(detalle.personas.map(p=>[p.orden,p.nombre,p.correo||'',p.celular||'',p.score,(p.cargos||[]).join(' / '),(p.ciudades||[]).join(' / '),p.resumen||'']));
+  const csv='﻿'+filas.map(f=>f.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`convocatoria-${c.cargo.replace(/[^\wáéíóúñ]+/gi,'-')}.csv`;a.click();
+};
+arrancar();
+</script>
+</body>
+</html>
