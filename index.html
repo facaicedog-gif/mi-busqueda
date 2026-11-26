@@ -31,6 +31,9 @@ button{cursor:pointer}
 .pills::-webkit-scrollbar{display:none}
 .pill{white-space:nowrap;font-size:13px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--linea);color:var(--gris)}
 .pill.on{background:var(--azul);border-color:var(--azul);color:#fff}
+.ciudad-f{display:flex;align-items:center;gap:6px;padding:6px 14px 0}
+.ciudad-f select{width:auto;max-width:100%;padding:7px 10px;border-radius:999px;font-size:14px;color:var(--tinta)}
+.ciudad-f select.on{border-color:var(--azul);color:var(--azul);font-weight:600}
 .lista{padding:8px 14px 100px;display:flex;flex-direction:column;gap:10px}
 .of{background:#fff;border-radius:16px;padding:12px;display:flex;gap:11px;box-shadow:0 2px 8px rgba(15,23,42,.06);position:relative;border:0;text-align:left;width:100%;color:inherit}
 .of.nueva::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--azul)}
@@ -195,6 +198,7 @@ a{color:var(--azul)}
   <div class="cab"><button class="acc" id="o-buscar">↻ Buscar ahora</button><small id="o-fecha"></small><h2 id="o-hola">Hola</h2></div>
   <div class="res" id="o-res"></div>
   <div class="pills" id="o-pills"></div>
+  <div class="ciudad-f"><label for="o-ciudad">📍</label><select id="o-ciudad" aria-label="Filtrar por ciudad"></select></div>
   <div class="lista" id="o-lista"></div>
 </section>
 
@@ -288,6 +292,10 @@ async function funcion(op,datos){
 
 /* ---------- estado ---------- */
 let perfil=null,ofertas=[],filtro='nueva',vista='ofertas',borrador=null,archivo=null;
+// 26-nov · La ciudad la filtra la persona (la búsqueda ya no descarta por ciudad).
+let ciudadSel=lsGet('busqueda.ciudad','');
+const ciudadDe=o=>{const c=String(o.ciudad||'').split(',')[0].replace(/·\s*remoto/i,'').trim();
+  if(!c||/^colombia/i.test(c))return 'Sin ciudad';return c};
 const ESTADOS=[['nueva','Nueva'],['interesa','Me interesa'],['postule','Postulé'],['entrevista','Entrevista'],['descartada','Descartada']];
 const nomEstado=e=>(ESTADOS.find(x=>x[0]===e)||[e,e])[1];
 const COLORES=['#1D4ED8','#0f766e','#7c3aed','#be123c','#b45309','#0369a1','#4d7c0f','#475569'];
@@ -487,12 +495,25 @@ function pintarOfertas(){
   $('o-buscar').innerHTML=buscando?'<span class="cargando" style="border-color:rgba(255,255,255,.4);border-top-color:#fff"></span>Buscando':'↻ Buscar ahora';
   const n=e=>ofertas.filter(o=>o.estado===e).length;
   $('o-res').innerHTML=`<div><b>${n('nueva')}</b><span>nuevas</span></div><div><b>${n('postule')}</b><span>postulado</span></div><div><b>${n('entrevista')}</b><span>entrevista</span></div><div><b>${ofertas.filter(seguirHoy).length}</b><span>seguir hoy</span></div>`;
-  const F=[['nueva','Nuevas',n('nueva')],['interesa','Me interesa',n('interesa')],['todas','Todas',ofertas.filter(o=>o.estado!=='descartada').length],['descartada','Descartadas',n('descartada')]];
+  // Ciudades de las ofertas, con cuántas hay (sin contar descartadas); la elegida se recuerda.
+  const conteo={};ofertas.filter(o=>o.estado!=='descartada').forEach(o=>{const c=ciudadDe(o);conteo[c]=(conteo[c]||0)+1});
+  const ciudades=Object.keys(conteo).sort((a,b)=>a==='Sin ciudad'?1:b==='Sin ciudad'?-1:conteo[b]-conteo[a]||a.localeCompare(b,'es'));
+  if(ciudadSel&&!conteo[ciudadSel]&&!ofertas.some(o=>ciudadDe(o)===ciudadSel)){ciudadSel='';lsSet('busqueda.ciudad','')}
+  const sel=$('o-ciudad');
+  sel.innerHTML=`<option value="">Todas las ciudades</option>`+ciudades.map(c=>`<option value="${esc(c)}"${c===ciudadSel?' selected':''}>${esc(c)} (${conteo[c]})</option>`).join('');
+  sel.classList.toggle('on',!!ciudadSel);
+  sel.onchange=()=>{ciudadSel=sel.value;lsSet('busqueda.ciudad',ciudadSel);pintarOfertas()};
+  $('o-ciudad').parentElement.classList.toggle('oculto',!ciudades.length);
+  const base=ciudadSel?ofertas.filter(o=>ciudadDe(o)===ciudadSel):ofertas;
+  const nb=e=>base.filter(o=>o.estado===e).length;
+  const F=[['nueva','Nuevas',nb('nueva')],['interesa','Me interesa',nb('interesa')],['todas','Todas',base.filter(o=>o.estado!=='descartada').length],['descartada','Descartadas',nb('descartada')]];
   $('o-pills').innerHTML=F.map(f=>`<button class="pill${filtro===f[0]?' on':''}" data-f="${f[0]}">${f[1]} · ${f[2]}</button>`).join('');
   $('o-pills').querySelectorAll('button').forEach(b=>b.onclick=()=>{filtro=b.dataset.f;pintarOfertas()});
-  const lista=ofertas.filter(o=>filtro==='todas'?o.estado!=='descartada':o.estado===filtro);
+  const lista=base.filter(o=>filtro==='todas'?o.estado!=='descartada':o.estado===filtro);
   if(!lista.length){
-    $('o-lista').innerHTML=`<div class="vacio">${buscando?'<span class="cargando"></span>Buscando ofertas para ti… tarda 1 o 2 minutos.':filtro==='nueva'?'No hay ofertas nuevas.<br>La búsqueda automática corre según tu perfil, o toca «Buscar ahora».':'Nada en esta lista.'}</div>`;return}
+    $('o-lista').innerHTML=`<div class="vacio">${buscando?'<span class="cargando"></span>Buscando ofertas para ti… tarda 1 o 2 minutos.':ciudadSel?`No hay ofertas en esta lista para ${esc(ciudadSel)}.<br><button class="volver" id="o-todas-c">Ver todas las ciudades</button>`:filtro==='nueva'?'No hay ofertas nuevas.<br>La búsqueda automática corre según tu perfil, o toca «Buscar ahora».':'Nada en esta lista.'}</div>`;
+    const t=$('o-todas-c');if(t)t.onclick=()=>{ciudadSel='';lsSet('busqueda.ciudad','');pintarOfertas()};
+    return}
   $('o-lista').innerHTML=lista.map(o=>`<button class="of${o.estado==='nueva'?' nueva':''}" data-id="${esc(o.id)}">${logoHTML(o)}<div class="txt"><h3>${esc(o.cargo)}</h3><div class="emp">${esc(o.empresa)} · ${esc(o.ciudad)}</div><div class="chips">${/sin dato/i.test(o.salario||'')||!o.salario?'<span class="chip">Salario sin dato</span>':`<span class="chip sal">${esc(o.salario)}</span>`}${/confidencial/i.test(o.empresa||'')?'<span class="chip conf">Vía headhunter</span>':''}<span class="chip">${esc(o.fuente)}</span>${o.fecha_pub?`<span class="chip">${hace(o.fecha_pub)}</span>`:''}${filtro==='todas'&&o.estado!=='nueva'?`<span class="chip est">${nomEstado(o.estado)}</span>`:''}</div></div>${scoreHTML(o.score)}</button>`).join('');
   $('o-lista').querySelectorAll('.of').forEach(b=>b.onclick=()=>abrirFicha(b.dataset.id));
 }
@@ -585,7 +606,7 @@ $('a-borrar').onclick=async()=>{
     perfil=null;ofertas=[];localStorage.removeItem('busqueda.perfil');localStorage.removeItem('busqueda.ofertas');toast('Borramos tus datos');abrirSubir(false)}
   catch(e){toast('No se pudo borrar. Revisa tu conexión.')}
 };
-$('a-salir').onclick=async()=>{const tk=sess&&sess.at;setSess(null);perfil=null;ofertas=[];['busqueda.perfil','busqueda.ofertas'].forEach(k=>localStorage.removeItem(k));if(tk)authCall('logout',{},tk).catch(()=>{});arrancar()};
+$('a-salir').onclick=async()=>{const tk=sess&&sess.at;setSess(null);perfil=null;ofertas=[];['busqueda.perfil','busqueda.ofertas','busqueda.ciudad'].forEach(k=>localStorage.removeItem(k));ciudadSel='';if(tk)authCall('logout',{},tk).catch(()=>{});arrancar()};
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sess&&perfil&&!buscando)cargarOfertas().then(()=>{if(['ofertas','seg'].includes(vista)&&$('ficha').classList.contains('oculto'))irA(vista)})});
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});

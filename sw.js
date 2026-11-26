@@ -1,6 +1,6 @@
 // Mi búsqueda · service worker mínimo: deja instalar la app y abrirla sin red.
 // Sube CACHE en cada publicación.
-const CACHE = 'busqueda-v1';
+const CACHE = 'busqueda-v2';
 const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon.svg', 'politica.html'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(BASE))); self.skipWaiting(); });
 self.addEventListener('activate', (e) => {
