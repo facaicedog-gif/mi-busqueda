@@ -133,6 +133,7 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
 .vacio{text-align:center;color:var(--gris);padding:30px 18px;font-size:14px;line-height:1.5}
 .cargando{display:inline-block;width:16px;height:16px;border:2px solid #c7d2fe;border-top-color:var(--azul);border-radius:50%;animation:g 0.8s linear infinite;vertical-align:-3px;margin-right:6px}
 @keyframes g{to{transform:rotate(360deg)}}
+#ptr{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-90px);z-index:40;background:#0f172a;color:#fff;padding:9px 16px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap;pointer-events:none;transition:transform .18s}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 14px;border-radius:12px;font-size:14px;z-index:20;max-width:90%;text-align:center}
 .entrada{padding:calc(env(safe-area-inset-top) + 40px) 22px 30px}
 .entrada h1{font-size:26px;margin:14px 0 4px}
@@ -296,6 +297,7 @@ a{color:var(--azul)}
 
 <!-- FICHA -->
 <div class="hoja oculto" id="ficha"></div>
+<div id="ptr">Desliza para actualizar</div>
 
 <script>
 'use strict';
@@ -884,6 +886,59 @@ if('serviceWorker'in navigator)navigator.serviceWorker.addEventListener('message
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sess&&perfil&&!buscando)cargarOfertas().then(()=>{if(['ofertas','seg'].includes(vista)&&$('ficha').classList.contains('oculto'))irA(vista)})});
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+/* ---------- 26-nov · actualizar como en Mi día ---------- */
+// Versión nueva: se compara la fecha de la página abierta con la del servidor (GitHub Pages
+// manda Last-Modified). Si hay una más nueva, se recarga sola. Recargar no borra nada:
+// todo está en la cuenta. No se recarga con una hoja abierta (ficha, subir hoja de vida).
+let updBusy=false;
+const hojaAbierta=()=>[...document.querySelectorAll('.hoja')].some(h=>!h.classList.contains('oculto'));
+async function checkUpdate(){
+  if(updBusy||location.protocol!=='https:')return false;updBusy=true;let did=false;
+  try{
+    const r=await fetch('./?t='+Date.now(),{method:'HEAD',cache:'no-store'});
+    const lm=r.ok&&r.headers.get('last-modified'),srv=lm?Date.parse(lm):0,mine=Date.parse(document.lastModified);
+    if(srv&&mine&&srv-mine>2000&&!hojaAbierta()&&!buscando){
+      let tried=null;try{tried=JSON.parse(sessionStorage.getItem('busqueda.upd'))}catch(e){}
+      if(!(tried&&tried.lm===lm&&Date.now()-tried.at<12*6e4)){
+        try{sessionStorage.setItem('busqueda.upd',JSON.stringify({lm,at:Date.now()}))}catch(e){}
+        did=true;toast('Hay una versión nueva. Actualizando…');
+        try{const reg=await navigator.serviceWorker.getRegistration();if(reg)await reg.update()}catch(e){}
+        setTimeout(()=>location.replace(location.pathname+'?u='+Date.now()),700);
+      }
+    }
+  }catch(e){}
+  updBusy=false;return did;
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
+setInterval(()=>{if(!document.hidden)checkUpdate()},10*6e4);
+setTimeout(checkUpdate,3000);
+async function refrescarTodo(){
+  if(await checkUpdate())return;
+  if(!sess){toast('Entra a tu cuenta para actualizar');return}
+  toast('Actualizando…');
+  try{await cargarPerfiles()}catch(e){}
+  await cargarOfertas();await cargarConvs();
+  if(!hojaAbierta())irA(vista||'ofertas');
+  toast('Todo al día');
+}
+// Deslizar hacia abajo desde arriba de la pantalla.
+let ptr=null;const ptrEl=$('ptr');
+const ptrShow=d=>{ptrEl.style.transform='translate(-50%,'+(d>0?Math.min(d/2,60)-10:-90)+'px)';ptrEl.textContent=d>130?'Suelta para actualizar':'Desliza para actualizar'};
+document.addEventListener('touchstart',e=>{
+  ptr=null;
+  if(scrollY>0||e.touches.length>1||hojaAbierta()||buscando)return;
+  ptr={y:e.touches[0].clientY,d:0};
+},{passive:true});
+document.addEventListener('touchmove',e=>{
+  if(!ptr)return;
+  if(scrollY>0){ptr=null;ptrShow(0);return}
+  ptr.d=e.touches[0].clientY-ptr.y;ptrShow(ptr.d>24?ptr.d:0);
+},{passive:true});
+document.addEventListener('touchend',()=>{
+  const go=ptr&&ptr.d>130&&scrollY<=0;ptr=null;ptrShow(0);
+  if(go)refrescarTodo();
+},{passive:true});
 </script>
 </body>
 </html>

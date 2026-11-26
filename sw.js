@@ -1,6 +1,6 @@
 // Mi búsqueda · service worker: deja instalar la app, abrirla sin red y recibir avisos.
 // Sube CACHE en cada publicación.
-const CACHE = 'busqueda-v6';
+const CACHE = 'busqueda-v7';
 const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon.svg', 'politica.html'];
 const FN = 'https://hlnxrveoytobqrwrbdvi.supabase.co/functions/v1/empleo';
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(BASE))); self.skipWaiting(); });
