@@ -656,8 +656,8 @@ function pintarOfertas(){
 /* ---------- 2 · ficha ---------- */
 async function cambiarOferta(o,campos){
   const antes=Object.assign({},o);Object.assign(o,campos,{actualizada:new Date().toISOString()});lsSet('busqueda.ofertas',ofertas);
-  try{await rest('empleo_ofertas?id=eq.'+o.id,{metodo:'PATCH',cuerpo:Object.assign({},campos,{actualizada:o.actualizada}),prefer:'return=minimal'})}
-  catch(e){Object.assign(o,antes);toast('No se guardó. Revisa tu conexión.')}
+  try{await rest('empleo_ofertas?id=eq.'+o.id,{metodo:'PATCH',cuerpo:Object.assign({},campos,{actualizada:o.actualizada}),prefer:'return=minimal'});return true}
+  catch(e){Object.assign(o,antes);toast('No se guardó. Revisa tu conexión.');return false}
 }
 function abrirFicha(id){
   const o=ofertas.find(x=>x.id===id);if(!o)return;
@@ -682,7 +682,8 @@ function abrirFicha(id){
     ${o.por_que?`<div class="box"><h4>Por qué encaja</h4><div class="txt13">${esc(o.por_que)}</div>${o.requisitos?`<div class="nota"><b>Piden:</b> ${esc(o.requisitos)}</div>`:''}</div>`:''}
     <div class="box"><h4>Cómo va</h4>
       <div class="estados" id="f-est">${ESTADOS.map(e=>`<button class="est${o.estado===e[0]?' on':''}" data-e="${e[0]}">${e[1]}</button>`).join('')}</div>
-      <label class="l">Nota</label><textarea id="f-nota" placeholder="Ej. postulé con la hoja de vida versión gerencia">${esc(o.nota||'')}</textarea>
+      <label class="l" id="f-nota-l">${o.estado==='descartada'?'Motivo del descarte':'Nota'}</label><textarea id="f-nota" placeholder="${o.estado==='descartada'?'Ej. el salario no alcanza, queda lejos…':'Ej. postulé con la hoja de vida versión gerencia'}">${esc(o.nota||'')}</textarea>
+      <button class="btn" id="f-nota-g" style="margin-top:8px" disabled>Guardada ✓</button>
       <label class="l">Recordarme hacer seguimiento</label><input type="datetime-local" id="f-rec" value="${loc}">
       <div class="nota">Aparece en «Seguimiento» y en «seguir hoy» el día que toca.</div>
     </div>
@@ -693,8 +694,16 @@ function abrirFicha(id){
   $('f-est').querySelectorAll('.est').forEach(b=>b.onclick=async()=>{
     const campos={estado:b.dataset.e};
     if(b.dataset.e==='postule'&&!o.recordar_en){const d=new Date();d.setDate(d.getDate()+7);d.setHours(9,0,0,0);campos.recordar_en=d.toISOString();$('f-rec').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);toast('Te recordamos hacer seguimiento en 7 días')}
-    await cambiarOferta(o,campos);$('f-est').querySelectorAll('.est').forEach(x=>x.classList.toggle('on',x.dataset.e===o.estado))});
-  $('f-nota').onblur=()=>{const v=$('f-nota').value.trim();if(v!==(o.nota||''))cambiarOferta(o,{nota:v||null})};
+    await cambiarOferta(o,campos);$('f-est').querySelectorAll('.est').forEach(x=>x.classList.toggle('on',x.dataset.e===o.estado));
+    // 26-nov · Al descartar se pide el motivo en el mismo cuadro de la nota.
+    const desc=o.estado==='descartada';$('f-nota-l').textContent=desc?'Motivo del descarte':'Nota';
+    $('f-nota').placeholder=desc?'Ej. el salario no alcanza, queda lejos…':'Ej. postulé con la hoja de vida versión gerencia';
+    if(desc&&!(o.nota||'').trim()){$('f-nota').focus();toast('Escribe el motivo y toca «Guardar»')}});
+  // 26-nov · Botón Guardar visible: se activa al escribir y confirma «Guardada ✓». Al salir se guarda igual.
+  const gN=$('f-nota-g'),pinN=()=>{const cambio=$('f-nota').value.trim()!==(o.nota||'');gN.disabled=!cambio;gN.classList.toggle('p',cambio);gN.textContent=cambio?'Guardar':'Guardada ✓'};
+  const guardaN=async()=>{const v=$('f-nota').value.trim();if(v===(o.nota||''))return;gN.disabled=true;gN.textContent='Guardando…';if(await cambiarOferta(o,{nota:v||null}))toast(o.estado==='descartada'?'Motivo guardado':'Nota guardada');pinN()};
+  $('f-nota').oninput=pinN;gN.onclick=guardaN;
+  $('f-nota').onblur=e=>{if(e.relatedTarget!==gN)guardaN()};
   $('f-rec').onchange=()=>{const v=$('f-rec').value;cambiarOferta(o,{recordar_en:v?new Date(v).toISOString():null})};
   const c=$('f-correo');if(c)c.onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(o.correo).then(()=>toast('Correo copiado'),()=>toast(o.correo))};
   const p=$('f-post');if(p)p.onclick=()=>{if(['nueva','interesa'].includes(o.estado))setTimeout(()=>{if(confirm('¿Te postulaste? La marcamos como «Postulé».')){const d=new Date();d.setDate(d.getDate()+7);d.setHours(9,0,0,0);cambiarOferta(o,{estado:'postule',recordar_en:o.recordar_en||d.toISOString()}).then(()=>abrirFicha(o.id))}},800)};
