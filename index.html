@@ -31,6 +31,26 @@ button{cursor:pointer}
 .pills::-webkit-scrollbar{display:none}
 .pill{white-space:nowrap;font-size:13px;padding:7px 12px;border-radius:999px;background:#fff;border:1px solid var(--linea);color:var(--gris)}
 .pill.on{background:var(--azul);border-color:var(--azul);color:#fff}
+/* 26-nov · varios perfiles */
+.perf .pill{display:flex;align-items:center;gap:6px;color:var(--tinta)}
+.perf .pill i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.perf .pill.on{background:#fff;color:var(--tinta);border-color:var(--azul);box-shadow:0 0 0 2px #dbeafe;font-weight:700}
+.of.marca::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--c)}
+.chip.pf{font-weight:600}
+.colores{display:flex;gap:8px;margin-top:10px}
+.colores button{width:30px;height:30px;border-radius:9px;border:0;padding:0}
+.colores button.on{outline:3px solid #bfdbfe;outline-offset:2px}
+.pr{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1f5f9}
+.pr:last-child{border-bottom:0}
+.pr .dot{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700;flex:none;font-size:13px}
+.pr .txt{flex:1;min-width:0}.pr b{font-size:14.5px}.pr small{display:block;font-size:12.5px;color:var(--gris);margin-top:2px;line-height:1.4}
+.pr .acc2{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap}
+.pr .acc2 button{background:none;border:0;padding:0;font-size:13px;color:var(--azul)}
+.pr .acc2 button.r{color:var(--roj)}
+.pausa{font-size:11px;padding:2px 6px;border-radius:6px;background:var(--ambf);color:var(--amb);margin-left:6px;font-weight:600}
+.btn.d{border-style:dashed;color:var(--azul)}
+.op{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--linea);border-radius:12px;padding:12px;margin-bottom:8px;color:var(--tinta)}
+.op b{font-size:14.5px}.op small{display:block;font-size:12.5px;color:var(--gris);margin-top:4px;line-height:1.4}
 .ciudad-f{display:flex;align-items:center;gap:6px;padding:6px 14px 0}
 .ciudad-f select{width:auto;max-width:100%;padding:7px 10px;border-radius:999px;font-size:14px;color:var(--tinta)}
 .ciudad-f select.on{border-color:var(--azul);color:var(--azul);font-weight:600}
@@ -160,6 +180,11 @@ a{color:var(--azul)}
 <section id="v-perfil" class="oculto">
   <div class="cab"><small id="p-paso">Paso 2 de 2</small><h2 id="p-titulo">¿Así te buscamos?</h2></div>
   <div class="cuerpo sube">
+    <div class="box"><h4>Nombre del perfil</h4>
+      <input type="text" id="p-nombre" maxlength="40" placeholder="Ej. Talento Humano">
+      <div class="colores" id="p-colores"></div>
+      <div class="nota">El color identifica las ofertas de este perfil en la lista.</div>
+    </div>
     <div class="box"><h4>Resumen de tu perfil</h4>
       <textarea id="p-resumen" rows="4"></textarea>
       <div class="nota" id="p-origen">Sacado de tu hoja de vida. Corrige lo que no esté bien.</div>
@@ -193,10 +218,23 @@ a{color:var(--azul)}
   </div>
 </section>
 
+<!-- NUEVO PERFIL -->
+<section id="v-nuevo" class="oculto">
+  <div class="cab"><button class="acc" id="n-cancelar">Cancelar</button><small>Nuevo perfil</small><h2>¿Cómo lo armamos?</h2></div>
+  <div class="cuerpo sube">
+    <div class="box">
+      <button class="op" id="n-hv"><b>📄 Subir otra hoja de vida</b><small>La versión enfocada a este camino (por ejemplo, tu HV comercial). La leemos y te proponemos cargos y resumen, como la primera vez.</small></button>
+      <div id="n-copias"></div>
+    </div>
+    <div class="nota" style="text-align:center">Después ves «¿Así te buscamos?» para ponerle nombre, color y cargos.</div>
+  </div>
+</section>
+
 <!-- 1 · OFERTAS -->
 <section id="v-ofertas" class="oculto">
   <div class="cab"><button class="acc" id="o-buscar">↻ Buscar ahora</button><small id="o-fecha"></small><h2 id="o-hola">Hola</h2></div>
   <div class="res" id="o-res"></div>
+  <div class="pills perf" id="o-perf"></div>
   <div class="pills" id="o-pills"></div>
   <div class="ciudad-f"><label for="o-ciudad">📍</label><select id="o-ciudad" aria-label="Filtrar por ciudad"></select></div>
   <div class="lista" id="o-lista"></div>
@@ -213,15 +251,11 @@ a{color:var(--azul)}
 <section id="v-ajustes" class="oculto">
   <div class="cab"><small id="a-correo"></small><h2>Ajustes</h2></div>
   <div class="cuerpo sube">
-    <div class="box"><h4>Tu perfil</h4><div id="a-perfil" class="txt13"></div>
-      <div class="btns" style="margin-top:10px"><button class="btn" id="a-editar">Editar perfil</button><button class="btn" id="a-subir">Subir otra hoja de vida</button></div>
-    </div>
-    <div class="box"><h4>Búsqueda automática</h4>
-      <label class="check"><input type="checkbox" id="a-activo"><span>Buscar ofertas por mí automáticamente</span></label>
-      <div class="nota" id="a-ultima"></div>
-    </div>
+    <div class="box"><h4>Tus perfiles de búsqueda</h4><div id="a-perfiles"></div></div>
+    <button class="btn d" id="a-nuevo">+ Agregar otro perfil</button>
+    <div class="box"><h4>Búsquedas de este mes</h4><div id="a-uso" class="txt13">…</div></div>
     <div class="box"><h4>Tus datos</h4>
-      <div class="txt13">Puedes borrar tu perfil y todas tus ofertas. No se puede deshacer.</div>
+      <div class="txt13">Puedes borrar todos tus perfiles y todas tus ofertas. No se puede deshacer.</div>
       <button class="btn r" style="margin-top:10px" id="a-borrar">Borrar todos mis datos</button>
       <div class="nota"><a href="politica.html" target="_blank" rel="noopener">Política de datos</a></div>
     </div>
@@ -292,6 +326,16 @@ async function funcion(op,datos){
 
 /* ---------- estado ---------- */
 let perfil=null,ofertas=[],filtro='nueva',vista='ofertas',borrador=null,archivo=null;
+// 26-nov · Varios perfiles por cuenta (hasta 3). `perfil` = el primero (para la autorización).
+const MAX_PERFILES=3;
+const COLORES_P=['#6d28d9','#0f766e','#b45309','#be123c','#1D4ED8'];
+let perfiles=[],perfilSel=lsGet('busqueda.perfilSel',''),destino='nuevo';
+const perfilDe=id=>perfiles.find(p=>p.id===id);
+async function cargarPerfiles(){
+  perfiles=await rest('empleo_perfiles?select=*&user_id=eq.'+sess.uid+'&order=creado.asc')||[];
+  perfil=perfiles[0]||null;lsSet('busqueda.perfiles',perfiles);
+  if(perfilSel&&!perfilDe(perfilSel)){perfilSel='';lsSet('busqueda.perfilSel','')}
+}
 // 26-nov · La ciudad la filtra la persona (la búsqueda ya no descarta por ciudad).
 let ciudadSel=lsGet('busqueda.ciudad','');
 const ciudadDe=o=>{const c=String(o.ciudad||'').split(',')[0].replace(/·\s*remoto/i,'').trim();
@@ -313,7 +357,7 @@ const fechaHora=iso=>new Date(iso).toLocaleString('es-CO',{weekday:'short',day:'
 
 /* ---------- vistas ---------- */
 function mostrar(id){
-  ['v-entrada','v-subir','v-perfil','v-ofertas','v-seg','v-ajustes'].forEach(v=>$(v).classList.toggle('oculto',v!==id));
+  ['v-entrada','v-subir','v-perfil','v-nuevo','v-ofertas','v-seg','v-ajustes'].forEach(v=>$(v).classList.toggle('oculto',v!==id));
   $('nav').classList.toggle('oculto',!['v-ofertas','v-seg','v-ajustes'].includes(id));
   window.scrollTo(0,0);
 }
@@ -328,12 +372,9 @@ document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>irA(b.dataset.
 
 async function arrancar(){
   if(!sess){modoEntrada('in');mostrar('v-entrada');return}
-  try{
-    const f=await rest('empleo_perfiles?select=*&user_id=eq.'+sess.uid);
-    perfil=f&&f[0]||null;
-  }catch(e){if(String(e.message)==='sin_sesion'){modoEntrada('in');mostrar('v-entrada');return}toast('Sin conexión. Mostrando lo último guardado.');perfil=lsGet('busqueda.perfil',null)}
-  if(!perfil||!(perfil.perfil&&perfil.perfil.cargos&&perfil.perfil.cargos.length)){abrirSubir(false);return}
-  lsSet('busqueda.perfil',perfil);
+  try{await cargarPerfiles()}
+  catch(e){if(String(e.message)==='sin_sesion'){modoEntrada('in');mostrar('v-entrada');return}toast('Sin conexión. Mostrando lo último guardado.');perfiles=lsGet('busqueda.perfiles',[]);perfil=perfiles[0]||null}
+  if(!perfiles.some(p=>p.perfil&&p.perfil.cargos&&p.perfil.cargos.length)){abrirSubir(false,'nuevo');return}
   await cargarOfertas();
   irA(vista||'ofertas');
 }
@@ -390,9 +431,11 @@ $('e-olvide').onclick=async()=>{
 })();
 
 /* ---------- A · subir hoja de vida ---------- */
-function abrirSubir(cancelable){
+// dest: 'nuevo' (crea un perfil) o el id del perfil al que se le cambia la hoja de vida.
+function abrirSubir(cancelable,dest){
+  destino=dest||'nuevo';
   archivo=null;$('s-file').value='';$('s-zona').classList.remove('oculto');$('s-archivo').classList.add('oculto');
-  $('s-acepto').checked=!!(perfil&&perfil.consentimiento);$('s-msg').innerHTML='';
+  $('s-acepto').checked=perfiles.some(p=>p.consentimiento);$('s-msg').innerHTML='';
   $('s-cancelar').classList.toggle('oculto',!cancelable);
   revisarLeer();mostrar('v-subir');
 }
@@ -417,25 +460,35 @@ $('s-leer').onclick=async()=>{
   try{
     const r=await funcion('leer_cv',{tipo:archivo.tipo,archivo:archivo.b64,nombre:archivo.nombre});
     const p=r.perfil||{};
+    // Lo que la HV no dice (salario, remoto, frecuencia) se toma del perfil que se reemplaza o del primero.
+    const base=destino!=='nuevo'?perfilDe(destino):perfil;
     borrador={resumen:p.resumen||'',cargos:p.cargos||[],nivel:p.nivel||'Profesional',ciudades:p.ciudades||[],
-      remoto:perfil&&perfil.perfil?!!perfil.perfil.remoto:false,
-      salario_min:perfil&&perfil.perfil?perfil.perfil.salario_min||null:null,
+      remoto:base&&base.perfil?!!base.perfil.remoto:false,
+      salario_min:base&&base.perfil?base.perfil.salario_min||null:null,
       excluir:p.excluir||[],anos_experiencia:p.anos_experiencia||null,
-      frecuencia:perfil?perfil.frecuencia:'lmv',cv_nombre:archivo.nombre,nombre:p.nombre||''};
+      frecuencia:base?base.frecuencia:'lmv',cv_nombre:archivo.nombre,nombre:p.nombre||'',
+      nombrePerfil:destino!=='nuevo'&&base?base.nombre:(perfiles.length?'':'Mi perfil'),
+      color:destino!=='nuevo'&&base?base.color:colorLibre()};
     archivo=null; // el archivo no se guarda en ningún lado
-    abrirPerfil('nuevo');
+    abrirPerfil('hv');
   }catch(e){$('s-msg').innerHTML=`<div class="err">${esc(e.message)}</div>`;$('s-leer').disabled=false}
 };
 
 /* ---------- B · confirmar / editar perfil ---------- */
+const colorLibre=()=>COLORES_P.find(c=>!perfiles.some(p=>p.color===c))||COLORES_P[0];
+// como: 'hv' (viene de leer la HV), 'editar' (destino = id) o 'copia' (destino = 'nuevo', borrador ya armado).
+function borradorDe(f){const p=f.perfil||{};return Object.assign({},p,{cargos:[...(p.cargos||[])],ciudades:[...(p.ciudades||[])],excluir:[...(p.excluir||[])],frecuencia:f.frecuencia,cv_nombre:f.cv_nombre,nombrePerfil:f.nombre,color:f.color})}
 function abrirPerfil(como){
   const editar=como==='editar';
-  if(editar){const p=perfil.perfil||{};borrador=Object.assign({},p,{cargos:[...(p.cargos||[])],ciudades:[...(p.ciudades||[])],excluir:[...(p.excluir||[])],frecuencia:perfil.frecuencia,cv_nombre:perfil.cv_nombre})}
-  $('p-paso').textContent=editar?'Tu perfil':'Paso 2 de 2';
+  if(editar)borrador=borradorDe(perfilDe(destino));
+  const creando=destino==='nuevo';
+  $('p-paso').textContent=editar?'Tu perfil':creando&&perfiles.length?'Nuevo perfil':'Paso 2 de 2';
   $('p-titulo').textContent=editar?'Edita cómo te buscamos':'¿Así te buscamos?';
-  $('p-origen').textContent=editar?'Es lo que usamos para buscarte ofertas.':'Sacado de tu hoja de vida. Corrige lo que no esté bien.';
-  $('p-guardar').textContent=editar?'Guardar cambios':'Empezar a buscar';
-  $('p-cancelar').classList.toggle('oculto',!(editar||perfil));
+  $('p-origen').textContent=como==='hv'?'Sacado de tu hoja de vida. Corrige lo que no esté bien.':como==='copia'?'Copiado de otro perfil. Cambia lo que quieras.':'Es lo que usamos para buscarte ofertas.';
+  $('p-guardar').textContent=creando?'Empezar a buscar':'Guardar cambios';
+  $('p-cancelar').classList.toggle('oculto',!perfiles.length);
+  $('p-nombre').value=borrador.nombrePerfil||'';
+  pintarColores();
   $('p-resumen').value=borrador.resumen||'';
   $('p-nivel').value=borrador.nivel||'Profesional';
   $('p-remoto').checked=!!borrador.remoto;
@@ -453,36 +506,68 @@ $('p-cargo-a').onclick=()=>agregar('p-cargo-n',borrador.cargos,5);
 $('p-ciudad-a').onclick=()=>agregar('p-ciudad-n',borrador.ciudades,4);
 $('p-excluir-a').onclick=()=>agregar('p-excluir-n',borrador.excluir,8);
 [['p-cargo-n','p-cargo-a'],['p-ciudad-n','p-ciudad-a'],['p-excluir-n','p-excluir-a']].forEach(([i,b])=>$(i).onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$(b).click()}});
+function pintarColores(){
+  $('p-colores').innerHTML=COLORES_P.map(c=>`<button style="background:${c}" data-c="${c}" class="${c===borrador.color?'on':''}" aria-label="Color"></button>`).join('');
+  $('p-colores').querySelectorAll('button').forEach(b=>b.onclick=()=>{borrador.color=b.dataset.c;pintarColores()});
+}
 function pintarFrec(){document.querySelectorAll('#p-frec .est').forEach(b=>{b.classList.toggle('on',b.dataset.f===borrador.frecuencia);b.onclick=()=>{borrador.frecuencia=b.dataset.f;pintarFrec()}})}
 $('p-salario').oninput=()=>{const d=$('p-salario').value.replace(/\D/g,'');$('p-salario').value=d?Number(d).toLocaleString('es-CO'):''};
-$('p-cancelar').onclick=()=>irA(perfil?'ajustes':'ofertas');
+$('p-cancelar').onclick=()=>irA('ajustes');
 $('p-guardar').onclick=async()=>{
+  const nombreP=$('p-nombre').value.trim();
+  if(!nombreP){$('p-msg').innerHTML='<div class="err">Ponle un nombre al perfil (por ejemplo, «Comercial»).</div>';return}
+  if(perfiles.some(p=>p.id!==destino&&p.nombre.toLowerCase()===nombreP.toLowerCase())){$('p-msg').innerHTML='<div class="err">Ya tienes un perfil con ese nombre.</div>';return}
   if(!borrador.cargos.length){$('p-msg').innerHTML='<div class="err">Agrega al menos un cargo.</div>';return}
-  const nuevo=!perfil||!(perfil.perfil&&perfil.perfil.cargos&&perfil.perfil.cargos.length);
+  const creando=destino==='nuevo';
+  const primero=!perfiles.length;
   const sal=Number($('p-salario').value.replace(/\D/g,''))||null;
   const p={resumen:$('p-resumen').value.trim(),cargos:borrador.cargos,nivel:$('p-nivel').value,ciudades:borrador.ciudades,
     remoto:$('p-remoto').checked,salario_min:sal,excluir:borrador.excluir,anos_experiencia:borrador.anos_experiencia||null};
-  const fila={user_id:sess.uid,perfil:p,frecuencia:borrador.frecuencia||'lmv',cv_nombre:borrador.cv_nombre||null,actualizado:new Date().toISOString()};
-  if(!perfil||!perfil.consentimiento)fila.consentimiento={version:CONSENT_V,fecha:new Date().toISOString(),canal:'app'};
-  if(nuevo)fila.activo=true;
+  const fila={perfil:p,nombre:nombreP,color:borrador.color||colorLibre(),frecuencia:borrador.frecuencia||'lmv',cv_nombre:borrador.cv_nombre||null,actualizado:new Date().toISOString()};
   $('p-guardar').disabled=true;
   try{
-    const r=await rest('empleo_perfiles?on_conflict=user_id',{metodo:'POST',cuerpo:fila,prefer:'resolution=merge-duplicates,return=representation'});
-    perfil=r&&r[0]||Object.assign({},perfil,fila);lsSet('busqueda.perfil',perfil);
+    let id=destino;
+    if(creando){
+      const previo=perfiles.find(x=>x.consentimiento);
+      fila.user_id=sess.uid;fila.activo=true;
+      fila.consentimiento=previo?previo.consentimiento:{version:CONSENT_V,fecha:new Date().toISOString(),canal:'app'};
+      const r=await rest('empleo_perfiles',{metodo:'POST',cuerpo:fila,prefer:'return=representation'});
+      id=r&&r[0]&&r[0].id;
+    }else{
+      await rest('empleo_perfiles?id=eq.'+destino,{metodo:'PATCH',cuerpo:fila,prefer:'return=minimal'});
+    }
+    await cargarPerfiles();
     if(borrador.nombre&&!sess.nombre){sess.nombre=borrador.nombre;setSess(sess)}
-    if(nuevo){await cargarOfertas();irA('ofertas');buscarAhora(true)}else{toast('Perfil guardado');irA('ajustes')}
-  }catch(e){$('p-msg').innerHTML='<div class="err">No se pudo guardar. Revisa tu conexión.</div>'}
+    if(creando){await cargarOfertas();irA('ofertas');buscarAhora(true,primero?null:id)}else{toast('Perfil guardado');irA('ajustes')}
+  }catch(e){$('p-msg').innerHTML=`<div class="err">${/409|400/.test(e.message)&&perfiles.length>=MAX_PERFILES?'Ya tienes '+MAX_PERFILES+' perfiles, que es el máximo.':'No se pudo guardar. Revisa tu conexión.'}</div>`}
   finally{$('p-guardar').disabled=false}
 };
 
+/* ---------- nuevo perfil: otra HV o copia de uno existente ---------- */
+function abrirNuevo(){
+  if(perfiles.length>=MAX_PERFILES){toast('Ya tienes '+MAX_PERFILES+' perfiles, que es el máximo.');return}
+  $('n-copias').innerHTML=perfiles.map(f=>`<button class="op" data-id="${esc(f.id)}"><b>⧉ Copiar «${esc(f.nombre)}» y cambiarlo</b><small>Sin subir nada: copia el resumen y las condiciones, y tú cambias los cargos.</small></button>`).join('');
+  $('n-copias').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const f=perfilDe(b.dataset.id);borrador=borradorDe(f);
+    borrador.nombrePerfil='';borrador.color=colorLibre();borrador.cv_nombre=f.cv_nombre;
+    destino='nuevo';abrirPerfil('copia')});
+  mostrar('v-nuevo');
+}
+$('n-hv').onclick=()=>abrirSubir(true,'nuevo');
+$('n-cancelar').onclick=()=>irA('ajustes');
+
 /* ---------- 1 · ofertas ---------- */
 let buscando=false;
-async function buscarAhora(primera){
+// perfilId: sólo ese perfil; sin él, todos los activos (o el elegido arriba en Ofertas).
+async function buscarAhora(primera,perfilId){
   if(buscando)return;buscando=true;pintarOfertas();
   try{
-    const r=await funcion('buscar_ahora');
+    const id=perfilId||perfilSel||null;
+    const r=await funcion('buscar_ahora',id?{perfil_id:id}:{});
     await cargarOfertas();
-    toast(r.nuevas?`${r.nuevas} oferta${r.nuevas>1?'s':''} nueva${r.nuevas>1?'s':''}`:primera?'Por ahora no hay ofertas que encajen. Seguimos buscando.':'No hay ofertas nuevas que encajen.',3500);
+    const n=r.nuevas||0;
+    const detalle=(r.resultados||[]).length>1?' ('+r.resultados.map(x=>`${x.nombre}: ${x.error?'falló':x.nuevas}`).join(' · ')+')':'';
+    toast(n?`${n} oferta${n>1?'s':''} nueva${n>1?'s':''}${detalle}`:(primera?'Por ahora no hay ofertas que encajen. Seguimos buscando.':'No hay ofertas nuevas que encajen.')+detalle,4500);
   }catch(e){toast(e.message,4000)}
   finally{buscando=false;if(vista==='ofertas')pintarOfertas()}
 }
@@ -495,8 +580,19 @@ function pintarOfertas(){
   $('o-buscar').innerHTML=buscando?'<span class="cargando" style="border-color:rgba(255,255,255,.4);border-top-color:#fff"></span>Buscando':'↻ Buscar ahora';
   const n=e=>ofertas.filter(o=>o.estado===e).length;
   $('o-res').innerHTML=`<div><b>${n('nueva')}</b><span>nuevas</span></div><div><b>${n('postule')}</b><span>postulado</span></div><div><b>${n('entrevista')}</b><span>entrevista</span></div><div><b>${ofertas.filter(seguirHoy).length}</b><span>seguir hoy</span></div>`;
+  // 26-nov · Selector de perfil (sólo si hay más de uno). Filtra antes que la ciudad.
+  const varios=perfiles.length>1;
+  $('o-perf').classList.toggle('oculto',!varios);
+  if(perfilSel&&!perfilDe(perfilSel)){perfilSel='';lsSet('busqueda.perfilSel','')}
+  if(varios){
+    const vivas=o=>o.estado!=='descartada';
+    $('o-perf').innerHTML=`<button class="pill${!perfilSel?' on':''}" data-p="">Todos · ${ofertas.filter(vivas).length}</button>`+
+      perfiles.map(f=>`<button class="pill${perfilSel===f.id?' on':''}" data-p="${esc(f.id)}"><i style="background:${esc(f.color)}"></i>${esc(f.nombre)} · ${ofertas.filter(o=>vivas(o)&&o.perfil_id===f.id).length}</button>`).join('');
+    $('o-perf').querySelectorAll('button').forEach(b=>b.onclick=()=>{perfilSel=b.dataset.p;lsSet('busqueda.perfilSel',perfilSel);pintarOfertas()});
+  }
+  const delPerfil=perfilSel?ofertas.filter(o=>o.perfil_id===perfilSel):ofertas;
   // Ciudades de las ofertas, con cuántas hay (sin contar descartadas); la elegida se recuerda.
-  const conteo={};ofertas.filter(o=>o.estado!=='descartada').forEach(o=>{const c=ciudadDe(o);conteo[c]=(conteo[c]||0)+1});
+  const conteo={};delPerfil.filter(o=>o.estado!=='descartada').forEach(o=>{const c=ciudadDe(o);conteo[c]=(conteo[c]||0)+1});
   const ciudades=Object.keys(conteo).sort((a,b)=>a==='Sin ciudad'?1:b==='Sin ciudad'?-1:conteo[b]-conteo[a]||a.localeCompare(b,'es'));
   if(ciudadSel&&!conteo[ciudadSel]&&!ofertas.some(o=>ciudadDe(o)===ciudadSel)){ciudadSel='';lsSet('busqueda.ciudad','')}
   const sel=$('o-ciudad');
@@ -504,7 +600,7 @@ function pintarOfertas(){
   sel.classList.toggle('on',!!ciudadSel);
   sel.onchange=()=>{ciudadSel=sel.value;lsSet('busqueda.ciudad',ciudadSel);pintarOfertas()};
   $('o-ciudad').parentElement.classList.toggle('oculto',!ciudades.length);
-  const base=ciudadSel?ofertas.filter(o=>ciudadDe(o)===ciudadSel):ofertas;
+  const base=ciudadSel?delPerfil.filter(o=>ciudadDe(o)===ciudadSel):delPerfil;
   const nb=e=>base.filter(o=>o.estado===e).length;
   const F=[['nueva','Nuevas',nb('nueva')],['interesa','Me interesa',nb('interesa')],['todas','Todas',base.filter(o=>o.estado!=='descartada').length],['descartada','Descartadas',nb('descartada')]];
   $('o-pills').innerHTML=F.map(f=>`<button class="pill${filtro===f[0]?' on':''}" data-f="${f[0]}">${f[1]} · ${f[2]}</button>`).join('');
@@ -514,7 +610,8 @@ function pintarOfertas(){
     $('o-lista').innerHTML=`<div class="vacio">${buscando?'<span class="cargando"></span>Buscando ofertas para ti… tarda 1 o 2 minutos.':ciudadSel?`No hay ofertas en esta lista para ${esc(ciudadSel)}.<br><button class="volver" id="o-todas-c">Ver todas las ciudades</button>`:filtro==='nueva'?'No hay ofertas nuevas.<br>La búsqueda automática corre según tu perfil, o toca «Buscar ahora».':'Nada en esta lista.'}</div>`;
     const t=$('o-todas-c');if(t)t.onclick=()=>{ciudadSel='';lsSet('busqueda.ciudad','');pintarOfertas()};
     return}
-  $('o-lista').innerHTML=lista.map(o=>`<button class="of${o.estado==='nueva'?' nueva':''}" data-id="${esc(o.id)}">${logoHTML(o)}<div class="txt"><h3>${esc(o.cargo)}</h3><div class="emp">${esc(o.empresa)} · ${esc(o.ciudad)}</div><div class="chips">${/sin dato/i.test(o.salario||'')||!o.salario?'<span class="chip">Salario sin dato</span>':`<span class="chip sal">${esc(o.salario)}</span>`}${/confidencial/i.test(o.empresa||'')?'<span class="chip conf">Vía headhunter</span>':''}<span class="chip">${esc(o.fuente)}</span>${o.fecha_pub?`<span class="chip">${hace(o.fecha_pub)}</span>`:''}${filtro==='todas'&&o.estado!=='nueva'?`<span class="chip est">${nomEstado(o.estado)}</span>`:''}</div></div>${scoreHTML(o.score)}</button>`).join('');
+  $('o-lista').innerHTML=lista.map(o=>{const pf=varios&&perfilDe(o.perfil_id);
+    return `<button class="of${pf?' marca':o.estado==='nueva'?' nueva':''}"${pf?` style="--c:${esc(pf.color)}"`:''} data-id="${esc(o.id)}">${logoHTML(o)}<div class="txt"><h3>${esc(o.cargo)}</h3><div class="emp">${esc(o.empresa)} · ${esc(o.ciudad)}</div><div class="chips">${pf?`<span class="chip pf" style="color:${esc(pf.color)};background:${esc(pf.color)}1a">${esc(pf.nombre)}</span>`:''}${/sin dato/i.test(o.salario||'')||!o.salario?'<span class="chip">Salario sin dato</span>':`<span class="chip sal">${esc(o.salario)}</span>`}${/confidencial/i.test(o.empresa||'')?'<span class="chip conf">Vía headhunter</span>':''}<span class="chip">${esc(o.fuente)}</span>${o.fecha_pub?`<span class="chip">${hace(o.fecha_pub)}</span>`:''}${filtro==='todas'&&o.estado!=='nueva'?`<span class="chip est">${nomEstado(o.estado)}</span>`:''}</div></div>${scoreHTML(o.score)}</button>`}).join('');
   $('o-lista').querySelectorAll('.of').forEach(b=>b.onclick=()=>abrirFicha(b.dataset.id));
 }
 
@@ -590,23 +687,49 @@ function pintarSeg(){
 
 /* ---------- ajustes ---------- */
 const FREC={diaria:'todos los días',lmv:'lunes, miércoles y viernes',semanal:'una vez por semana'};
+const siglas=n=>String(n||'?').trim().split(/\s+/).filter(w=>!/^(de|del|y|la|el)$/i.test(w)).map(w=>w[0]).join('').slice(0,2).toUpperCase()||'?';
 function pintarAjustes(){
   $('a-correo').textContent=sess.email||'';
-  const p=(perfil&&perfil.perfil)||{};
-  $('a-perfil').innerHTML=`<b>${esc((p.cargos||[]).slice(0,3).join(' · '))}</b><br>${esc(p.nivel||'')} · ${esc((p.ciudades||[]).join(', '))}${p.remoto?' · remoto':''}<br>${p.salario_min?'Desde $'+Number(p.salario_min).toLocaleString('es-CO'):'Sin salario mínimo'} · busca ${esc(FREC[perfil.frecuencia]||'')}${perfil.cv_nombre?`<div class="nota">Hoja de vida: ${esc(perfil.cv_nombre)} (no guardamos el archivo)</div>`:''}`;
-  $('a-activo').checked=perfil.activo!==false;
-  $('a-ultima').textContent=perfil.ultima_busqueda?'Última búsqueda: '+fechaHora(perfil.ultima_busqueda):'Todavía no ha corrido ninguna búsqueda.';
+  $('a-perfiles').innerHTML=perfiles.map(f=>{const p=f.perfil||{};const pausa=f.activo===false;
+    return `<div class="pr"><div class="dot" style="background:${esc(f.color)}">${esc(siglas(f.nombre))}</div><div class="txt">
+      <b>${esc(f.nombre)}</b>${pausa?'<span class="pausa">En pausa</span>':''}
+      <small>${esc((p.cargos||[]).slice(0,3).join(' · '))}${(p.cargos||[]).length>3?' · +'+((p.cargos||[]).length-3):''}<br>
+      ${esc(p.nivel||'')} · ${esc((p.ciudades||[]).join(', '))}${p.remoto?' · remoto':''} · ${p.salario_min?'desde $'+Number(p.salario_min).toLocaleString('es-CO'):'sin salario mínimo'} · ${esc(FREC[f.frecuencia]||'')}<br>
+      ${f.ultima_busqueda?'Última búsqueda: '+esc(fechaHora(f.ultima_busqueda)):'Todavía no ha buscado.'}${f.cv_nombre?' · HV: '+esc(f.cv_nombre):''}</small>
+      <div class="acc2"><button data-a="editar" data-id="${esc(f.id)}">✎ Editar</button><button data-a="hv" data-id="${esc(f.id)}">📄 Otra HV</button><button data-a="pausa" data-id="${esc(f.id)}">${pausa?'▶ Reanudar':'⏸ Pausar'}</button>${perfiles.length>1?`<button class="r" data-a="borrar" data-id="${esc(f.id)}">🗑 Borrar</button>`:''}</div>
+    </div></div>`}).join('');
+  $('a-perfiles').querySelectorAll('.acc2 button').forEach(b=>b.onclick=()=>accionPerfil(b.dataset.a,b.dataset.id));
+  const libres=MAX_PERFILES-perfiles.length;
+  $('a-nuevo').textContent=libres>0?`+ Agregar otro perfil (te ${libres===1?'queda 1':'quedan '+libres})`:'Ya tienes los '+MAX_PERFILES+' perfiles posibles';
+  $('a-nuevo').disabled=libres<=0;
+  $('a-uso').textContent='Cargando…';
+  funcion('uso').then(u=>{
+    const linea=perfiles.map(f=>`${esc(f.nombre)}: ${(u.busquedas_mes||{})[f.id]||0}`).join(' · ');
+    $('a-uso').innerHTML=`${linea}<div class="nota">Cada búsqueda de un perfil usa 3 consultas al buscador. Quedan ${u.consultas_libres} de ${u.tope} este mes.</div>`;
+  }).catch(()=>{$('a-uso').textContent='No se pudo cargar ahora.'});
 }
-$('a-editar').onclick=()=>abrirPerfil('editar');
-$('a-subir').onclick=()=>abrirSubir(true);
-$('a-activo').onchange=async()=>{const v=$('a-activo').checked;try{await rest('empleo_perfiles?user_id=eq.'+sess.uid,{metodo:'PATCH',cuerpo:{activo:v},prefer:'return=minimal'});perfil.activo=v;toast(v?'Búsqueda automática encendida':'Búsqueda automática en pausa')}catch(e){$('a-activo').checked=!v;toast('No se guardó.')}};
+async function accionPerfil(a,id){
+  const f=perfilDe(id);if(!f)return;
+  if(a==='editar'){destino=id;abrirPerfil('editar');return}
+  if(a==='hv'){abrirSubir(true,id);return}
+  if(a==='pausa'){const v=f.activo===false;
+    try{await rest('empleo_perfiles?id=eq.'+id,{metodo:'PATCH',cuerpo:{activo:v},prefer:'return=minimal'});f.activo=v;toast(v?`«${f.nombre}» vuelve a buscar`:`«${f.nombre}» en pausa`);pintarAjustes()}
+    catch(e){toast('No se guardó.')}return}
+  if(a==='borrar'){
+    const n=ofertas.filter(o=>o.perfil_id===id).length;
+    if(!confirm(`¿Borrar el perfil «${f.nombre}» y sus ${n} oferta${n===1?'':'s'}? No se puede deshacer.`))return;
+    try{await rest('empleo_perfiles?id=eq.'+id,{metodo:'DELETE',prefer:'return=minimal'});
+      await cargarPerfiles();await cargarOfertas();toast(`Borramos «${f.nombre}»`);pintarAjustes()}
+    catch(e){toast('No se pudo borrar. Revisa tu conexión.')}}
+}
+$('a-nuevo').onclick=abrirNuevo;
 $('a-borrar').onclick=async()=>{
-  if(!confirm('¿Borrar tu perfil y todas tus ofertas? No se puede deshacer.'))return;
+  if(!confirm('¿Borrar todos tus perfiles y todas tus ofertas? No se puede deshacer.'))return;
   try{await rest('empleo_ofertas?user_id=eq.'+sess.uid,{metodo:'DELETE',prefer:'return=minimal'});await rest('empleo_perfiles?user_id=eq.'+sess.uid,{metodo:'DELETE',prefer:'return=minimal'});
-    perfil=null;ofertas=[];localStorage.removeItem('busqueda.perfil');localStorage.removeItem('busqueda.ofertas');toast('Borramos tus datos');abrirSubir(false)}
+    perfil=null;perfiles=[];ofertas=[];['busqueda.perfiles','busqueda.ofertas','busqueda.perfilSel'].forEach(k=>localStorage.removeItem(k));perfilSel='';toast('Borramos tus datos');abrirSubir(false,'nuevo')}
   catch(e){toast('No se pudo borrar. Revisa tu conexión.')}
 };
-$('a-salir').onclick=async()=>{const tk=sess&&sess.at;setSess(null);perfil=null;ofertas=[];['busqueda.perfil','busqueda.ofertas','busqueda.ciudad'].forEach(k=>localStorage.removeItem(k));ciudadSel='';if(tk)authCall('logout',{},tk).catch(()=>{});arrancar()};
+$('a-salir').onclick=async()=>{const tk=sess&&sess.at;setSess(null);perfil=null;perfiles=[];ofertas=[];['busqueda.perfil','busqueda.perfiles','busqueda.ofertas','busqueda.ciudad','busqueda.perfilSel'].forEach(k=>localStorage.removeItem(k));ciudadSel='';perfilSel='';if(tk)authCall('logout',{},tk).catch(()=>{});arrancar()};
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&sess&&perfil&&!buscando)cargarOfertas().then(()=>{if(['ofertas','seg'].includes(vista)&&$('ficha').classList.contains('oculto'))irA(vista)})});
 if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
