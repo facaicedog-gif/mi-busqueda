@@ -1,7 +1,7 @@
 // Telar talento · service worker: deja instalar la app, abrirla sin red y recibir avisos.
 // Sube CACHE en cada publicación.
-const CACHE = 'busqueda-v8';
-const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon.svg', 'icon-empresas.svg', 'politica.html'];
+const CACHE = 'busqueda-v9';
+const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon.svg', 'icon-empresas.svg', 'politica.html', 'empresa.html', 'manifest-empresas.webmanifest', 'iconos/talento-192.png', 'iconos/talento-512.png', 'iconos/talento-180.png', 'iconos/empresas-192.png', 'iconos/empresas-512.png', 'iconos/empresas-180.png'];
 const FN = 'https://hlnxrveoytobqrwrbdvi.supabase.co/functions/v1/empleo';
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(BASE))); self.skipWaiting(); });
 self.addEventListener('activate', (e) => {
