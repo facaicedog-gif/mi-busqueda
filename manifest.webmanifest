@@ -1,11 +1,18 @@
 {
-  "name": "Mi búsqueda",
-  "short_name": "Mi búsqueda",
+  "name": "Telar talento",
+  "short_name": "Telar",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f4f6fb",
-  "theme_color": "#0b1f5c",
+  "background_color": "#F4F6FB",
+  "theme_color": "#312E81",
   "lang": "es",
-  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }

@@ -3,18 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b1f5c">
+<meta name="theme-color" content="#312E81">
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Mi búsqueda</title>
+<title>Telar talento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--azul:#1D4ED8;--azul2:#0b1f5c;--tinta:#0f172a;--gris:#64748b;--linea:#e2e8f0;--fondo:#f4f6fb;
+:root{--azul:#4F46E5;--azul2:#312E81;--tinta:#0f172a;--gris:#64748b;--linea:#e2e8f0;--fondo:#f4f6fb;
 --ok:#047857;--okf:#d1fae5;--amb:#b45309;--ambf:#fef3c7;--mor:#6d28d9;--morf:#ede9fe;--roj:#b91c1c;--rojf:#fee2e2}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--fondo);color:var(--tinta);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+html,body{margin:0;background:var(--fondo);color:var(--tinta);font-family:'Plus Jakarta Sans',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+/* 26-nov · Sistema Telar (Apps/documentos/telar-diseno/Telar.dc.html, ajuste de las 8:17 p. m.): «Telar» con mayúscula y SIN raya;
+   lo distintivo es el tejido a la izquierda (3 hilos de color = los 3 productos; 2 oscuros = la estrategia que los cruza). */
+.wm{font-family:'Outfit','Plus Jakarta Sans',sans-serif;font-weight:700;letter-spacing:-.04em;line-height:1;display:inline-flex;align-items:center;gap:.18em}
+.wm .tej{width:1.05em;height:1.05em;flex:none;margin-right:.04em;color:#0F172A}
+.wm .sub{font-family:'Plus Jakarta Sans',sans-serif;font-size:.42em;font-weight:700;letter-spacing:0;align-self:flex-end;margin-bottom:.16em}
+.firma{font-size:12px;color:var(--gris);text-align:center;margin-top:22px}.firma b{color:var(--tinta)}
+.cab .wm{font-size:20px;margin-bottom:10px;color:#fff}
+
 body{max-width:520px;margin:0 auto;min-height:100vh;position:relative}
 button,input,select,textarea{font:inherit;font-size:16px}
 button{cursor:pointer}
@@ -136,7 +145,7 @@ label.l{display:block;font-size:13px;color:var(--gris);margin:10px 0 4px}
 #ptr{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-90px);z-index:40;background:#0f172a;color:#fff;padding:9px 16px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap;pointer-events:none;transition:transform .18s}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 14px;border-radius:12px;font-size:14px;z-index:20;max-width:90%;text-align:center}
 .entrada{padding:calc(env(safe-area-inset-top) + 40px) 22px 30px}
-.entrada h1{font-size:26px;margin:14px 0 4px}
+.entrada h1{font-size:26px;margin:24px 0 4px}
 .seg{display:flex;background:#e2e8f0;border-radius:12px;padding:3px;margin:18px 0 6px}
 .seg button{flex:1;border:0;background:none;padding:9px;border-radius:9px;font-size:14px;color:var(--gris)}
 .seg button.on{background:#fff;color:var(--tinta);font-weight:600}
@@ -147,8 +156,8 @@ a{color:var(--azul)}
 
 <!-- ENTRADA -->
 <section id="v-entrada" class="entrada oculto">
-  <img src="icon.svg" alt="" width="56" height="56">
-  <h1>Mi búsqueda</h1>
+  <div class="wm" style="font-size:56px;color:var(--tinta)" aria-label="Telar talento"><svg class="tej" viewBox="0 0 48 48" fill="none" aria-hidden="true"><defs><mask id="tcv13" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><rect x="0" y="11" width="48" height="10" fill="#000"/></mask><mask id="tcv2" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><rect x="0" y="27" width="48" height="10" fill="#000"/></mask><mask id="tch1" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><rect x="19" y="0" width="10" height="48" fill="#000"/></mask><mask id="tch2" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><rect x="7" y="0" width="10" height="48" fill="#000"/><rect x="31" y="0" width="10" height="48" fill="#000"/></mask></defs><path d="M12 6V42" stroke="#4F46E5" stroke-width="6" stroke-linecap="round" mask="url(#tcv13)"/><path d="M24 6V42" stroke="#047857" stroke-width="6" stroke-linecap="round" mask="url(#tcv2)"/><path d="M36 6V42" stroke="#1D4ED8" stroke-width="6" stroke-linecap="round" mask="url(#tcv13)"/><path d="M5 16H43" stroke="currentColor" stroke-width="6" stroke-linecap="round" mask="url(#tch1)"/><path d="M5 32H43" stroke="currentColor" stroke-width="6" stroke-linecap="round" mask="url(#tch2)"/></svg>Telar<span class="sub" style="color:var(--azul)">talento</span></div>
+  <h1>Ten oficio.</h1>
   <div class="txt13" style="color:var(--gris)">Sube tu hoja de vida y te traemos las ofertas que encajan contigo, con el porqué.</div>
   <div class="seg"><button id="e-in" class="on">Entrar</button><button id="e-up">Crear cuenta</button></div>
   <form id="f-entrada">
@@ -158,6 +167,7 @@ a{color:var(--azul)}
     <button class="btn p" style="margin-top:16px" id="e-ir">Entrar</button>
   </form>
   <button class="volver" style="margin-top:14px" id="e-olvide">Olvidé mi contraseña</button>
+  <div class="firma">un producto de <b>Veltrion</b></div>
   <div id="e-msg"></div>
 </section>
 
@@ -243,7 +253,7 @@ a{color:var(--azul)}
 
 <!-- 1 · OFERTAS -->
 <section id="v-ofertas" class="oculto">
-  <div class="cab"><button class="acc" id="o-buscar">↻ Buscar ahora</button><small id="o-fecha"></small><h2 id="o-hola">Hola</h2></div>
+  <div class="cab"><button class="acc" id="o-buscar">↻ Buscar ahora</button><div class="wm"><svg class="tej" viewBox="0 0 48 48" fill="none" aria-hidden="true"><defs><mask id="tbv13" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><rect x="0" y="11" width="48" height="10" fill="#000"/></mask><mask id="tbv2" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><rect x="0" y="27" width="48" height="10" fill="#000"/></mask><mask id="tbh1" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><rect x="19" y="0" width="10" height="48" fill="#000"/></mask><mask id="tbh2" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><rect x="7" y="0" width="10" height="48" fill="#000"/><rect x="31" y="0" width="10" height="48" fill="#000"/></mask></defs><path d="M12 6V42" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" mask="url(#tbv13)"/><path d="M24 6V42" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" mask="url(#tbv2)"/><path d="M36 6V42" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" mask="url(#tbv13)"/><path d="M5 16H43" stroke="rgba(15,23,42,.55)" stroke-width="6" stroke-linecap="round" mask="url(#tbh1)"/><path d="M5 32H43" stroke="rgba(15,23,42,.55)" stroke-width="6" stroke-linecap="round" mask="url(#tbh2)"/></svg>Telar<span class="sub">talento</span></div><br><small id="o-fecha"></small><h2 id="o-hola">Hola</h2></div>
   <div class="res" id="o-res"></div>
   <div class="pills perf" id="o-perf"></div>
   <div class="pills" id="o-pills"></div>

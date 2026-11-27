@@ -1,7 +1,7 @@
-// Mi búsqueda · service worker: deja instalar la app, abrirla sin red y recibir avisos.
+// Telar talento · service worker: deja instalar la app, abrirla sin red y recibir avisos.
 // Sube CACHE en cada publicación.
-const CACHE = 'busqueda-v7';
-const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon.svg', 'politica.html'];
+const CACHE = 'busqueda-v8';
+const BASE = ['./', 'index.html', 'manifest.webmanifest', 'icon.svg', 'icon-empresas.svg', 'politica.html'];
 const FN = 'https://hlnxrveoytobqrwrbdvi.supabase.co/functions/v1/empleo';
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(BASE))); self.skipWaiting(); });
 self.addEventListener('activate', (e) => {
@@ -28,7 +28,7 @@ self.addEventListener('push', (e) => {
     data: { token: d.token || '', url: d.url || './' },
   };
   if (d.token) opciones.actions = [{ action: 'si', title: '✓ Participar' }, { action: 'no', title: 'No me interesa' }];
-  e.waitUntil(self.registration.showNotification(d.title || 'Mi búsqueda', opciones));
+  e.waitUntil(self.registration.showNotification(d.title || 'Telar talento', opciones));
 });
 
 async function abrir(url, token) {
@@ -47,7 +47,7 @@ self.addEventListener('notificationclick', (e) => {
       .then((r) => r.json())
       .then((j) => {
         const est = j && j.resultado && j.resultado.r_estado;
-        const t = est === 'participa' ? '¡Estás dentro! 🎉' : est === 'tarde' ? 'Cupo completo' : est === 'no' ? 'Listo' : 'Mi búsqueda';
+        const t = est === 'participa' ? '¡Estás dentro! 🎉' : est === 'tarde' ? 'Cupo completo' : est === 'no' ? 'Listo' : 'Telar talento';
         const b = est === 'participa' ? 'Toca para ver la empresa, el lugar de trabajo y el contacto.'
           : est === 'tarde' ? 'Se llenaron los cupos antes de tu respuesta. Te avisaremos de la próxima.'
           : est === 'no' ? 'No te volveremos a mostrar esta convocatoria.' : 'Abre la app para ver la convocatoria.';
